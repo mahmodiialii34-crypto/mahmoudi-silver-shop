@@ -1,0 +1,6 @@
+{
+  "name": "mahmoudi-silver-shop",
+  "scripts": {
+    "start": "npx serve -s . -l $PORT"
+  }
+}
