@@ -17,14 +17,14 @@
     --chrome:#eef1f4;
     --ember:#8a4b3a;
     --ivory:#f2efe9;
+    --gold:#c9a961;
+    --good:#5a8f6b;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;height:100%;}
   body{
-    background:
-      radial-gradient(120% 55% at 50% -10%, #ffffff0d 0%, transparent 60%),
-      var(--graphite);
+    background: radial-gradient(120% 55% at 50% -10%, #ffffff0d 0%, transparent 60%), var(--graphite);
     color:var(--ivory);
     font-family:'Vazirmatn', sans-serif;
     overflow-x:hidden;
@@ -32,35 +32,44 @@
     padding-bottom:calc(96px + var(--safe-bottom));
   }
   ::selection{background:var(--silver); color:var(--graphite);}
+  img{-webkit-user-drag:none;}
 
   header{
     position:sticky; top:0; z-index:30;
-    padding:22px 20px 16px;
-    background:linear-gradient(180deg, var(--graphite) 60%, transparent);
+    padding:16px 16px 12px;
+    background:linear-gradient(180deg, var(--graphite) 65%, transparent);
     backdrop-filter: blur(6px);
-    text-align:center;
     border-bottom:1px solid #d7dbe022;
   }
-  .brand{
-    font-size:23px; font-weight:800; letter-spacing:.5px;
-    color:var(--chrome);
-    display:flex; align-items:center; justify-content:center; gap:10px;
+  .header-row{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .icon-btn{
+    width:38px; height:38px; border-radius:50%; border:1px solid #d7dbe030;
+    background:#ffffff08; color:var(--silver); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; flex:0 0 auto;
   }
-  .brand .ring-mark{
-    width:16px; height:16px; border:2.5px solid var(--silver);
-    border-radius:50%; display:inline-block; position:relative;
+  .icon-btn svg{width:18px; height:18px;}
+  .brand-center{display:flex; flex-direction:column; align-items:center; flex:1; min-width:0;}
+  .logo-img{width:40px; height:40px; border-radius:50%; object-fit:cover; margin-bottom:4px; box-shadow:0 2px 8px #00000060;}
+  .brand{font-size:17px; font-weight:800; color:var(--chrome); white-space:nowrap;}
+  .tagline{font-size:11px; color:var(--silver-dim); margin-top:2px;}
+
+  .loyalty-strip{
+    margin-top:12px; display:flex; align-items:center; justify-content:space-between;
+    background:#ffffff08; border:1px solid #c9a96130; border-radius:12px; padding:8px 12px;
+    font-size:11.5px; color:var(--silver-dim);
   }
-  .brand .ring-mark::after{
-    content:''; position:absolute; top:-5px; left:50%; transform:translateX(-50%);
-    width:5px; height:5px; background:var(--ember); border-radius:1px;
+  .loyalty-strip b{color:var(--gold);}
+
+  .search-wrap{overflow:hidden; max-height:0; transition:max-height .25s;}
+  .search-wrap.open{max-height:60px; margin-top:10px;}
+  .search-wrap input{
+    width:100%; padding:11px 14px; border-radius:12px; border:1px solid #d7dbe030;
+    background:#ffffff0a; color:var(--ivory); font-family:inherit; font-size:13.5px;
   }
-  .tagline{
-    margin-top:6px; font-size:12.5px; color:var(--silver-dim);
-    letter-spacing:.3px;
-  }
+  .search-wrap input::placeholder{color:#ffffff55;}
 
   .chips{
-    display:flex; gap:8px; overflow-x:auto; padding:16px 20px 4px;
+    display:flex; gap:8px; overflow-x:auto; padding:14px 16px 4px;
     scrollbar-width:none;
   }
   .chips::-webkit-scrollbar{display:none;}
@@ -70,62 +79,49 @@
     font-size:13px; font-weight:500; white-space:nowrap;
     background:#ffffff08; cursor:pointer; transition:.2s;
   }
-  .chip.active{
-    background:var(--silver); color:var(--graphite); border-color:var(--silver);
-    font-weight:700;
-  }
+  .chip.active{ background:var(--silver); color:var(--graphite); border-color:var(--silver); font-weight:700; }
 
-  main{padding:14px 16px 20px;}
+  main{padding:10px 16px 20px;}
   .card{
     display:flex; align-items:center; gap:14px;
     background:linear-gradient(135deg, var(--velvet), var(--velvet-2));
     border:1px solid #d7dbe022;
     border-radius:18px;
-    padding:14px; margin-bottom:12px;
-    position:relative; overflow:hidden;
+    padding:12px; margin-bottom:12px;
+    position:relative; overflow:hidden; cursor:pointer;
   }
   .card::after{
     content:''; position:absolute; inset:0;
     background:radial-gradient(60% 100% at 100% 0%, #ffffff10, transparent);
     pointer-events:none;
   }
-  .jewel{
-    flex:0 0 auto; width:54px; height:54px; position:relative;
-    display:flex; align-items:center; justify-content:center;
+  .photo{
+    flex:0 0 auto; width:72px; height:72px; border-radius:14px; position:relative;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
-  .jewel .ring{
-    width:38px; height:38px; border-radius:50%;
-    border:5px solid var(--silver);
-    box-shadow: inset 0 0 0 1px #00000030, 0 3px 8px #00000050;
-  }
-  .jewel .gem{
-    position:absolute; top:2px; left:50%; transform:translateX(-50%) rotate(45deg);
-    width:12px; height:12px; border-radius:2px;
-  }
+  .photo .ring{ width:34px; height:34px; border-radius:50%; border:5px solid var(--silver); box-shadow: inset 0 0 0 1px #00000030, 0 3px 8px #00000050; }
+  .photo .gem{ position:absolute; top:12px; left:50%; transform:translateX(-50%) rotate(45deg); width:11px; height:11px; border-radius:2px; }
   .info{flex:1; min-width:0;}
-  .name{font-size:15.5px; font-weight:700; color:var(--chrome);}
-  .notes{font-size:12px; color:var(--silver-dim); margin-top:3px; line-height:1.7;}
-  .row-bottom{display:flex; align-items:center; justify-content:space-between; margin-top:10px;}
-  .price{font-size:13.5px; font-weight:700; color:var(--chrome);}
-  .price::after{content:' تومان';font-weight:500; font-size:11px; color:var(--silver-dim);}
+  .name{font-size:14.5px; font-weight:700; color:var(--chrome);}
+  .rating-row{display:flex; align-items:center; gap:5px; margin-top:3px;}
+  .stars{color:var(--gold); font-size:11px; letter-spacing:1px;}
+  .rating-count{font-size:10.5px; color:var(--silver-dim);}
+  .notes{font-size:11.5px; color:var(--silver-dim); margin-top:3px; line-height:1.6;}
+  .row-bottom{display:flex; align-items:center; justify-content:space-between; margin-top:8px;}
+  .price{font-size:13px; font-weight:700; color:var(--chrome);}
+  .price::after{content:' تومان';font-weight:500; font-size:10.5px; color:var(--silver-dim);}
   .add-btn{
-    width:34px; height:34px; border-radius:50%; border:none;
-    background:var(--silver); color:var(--graphite); font-size:19px; font-weight:800;
+    width:32px; height:32px; border-radius:50%; border:none;
+    background:var(--silver); color:var(--graphite); font-size:18px; font-weight:800;
     display:flex; align-items:center; justify-content:center;
     cursor:pointer; transition:transform .15s;
   }
   .add-btn:active{transform:scale(.88);}
-  .stepper{
-    display:flex; align-items:center; gap:10px;
-    background:#00000030; border-radius:999px; padding:4px 10px;
-  }
-  .stepper button{
-    width:22px;height:22px;border:none;border-radius:50%;
-    background:var(--silver); color:var(--graphite); font-weight:800; font-size:14px;
-    cursor:pointer;
-  }
+  .stepper{ display:flex; align-items:center; gap:10px; background:#00000030; border-radius:999px; padding:4px 10px; }
+  .stepper button{ width:22px;height:22px;border:none;border-radius:50%; background:var(--silver); color:var(--graphite); font-weight:800; font-size:14px; cursor:pointer; }
   .stepper span{font-size:13px; font-weight:700; min-width:14px; text-align:center;}
 
+  /* ---------- Cart bar ---------- */
   .cart-bar{
     position:fixed; left:16px; right:16px; bottom:calc(16px + var(--safe-bottom));
     background:var(--silver); color:var(--graphite);
@@ -136,87 +132,216 @@
     transform:translateY(120%); transition:transform .35s cubic-bezier(.2,.8,.2,1);
   }
   .cart-bar.show{transform:translateY(0);}
-  .cart-bar .left{font-weight:800; font-size:14.5px; display:flex; gap:8px; align-items:center;}
+  .cart-bar .left{font-weight:800; font-size:14px; display:flex; gap:8px; align-items:center;}
   .cart-bar .count{
     background:var(--graphite); color:var(--silver);
     width:22px;height:22px;border-radius:50%;
     display:flex; align-items:center; justify-content:center;
     font-size:12px; font-weight:800;
   }
-  .cart-bar .total{font-weight:800; font-size:14.5px;}
+  .cart-bar .total{font-weight:800; font-size:14px;}
 
+  /* ---------- AI chat floating button ---------- */
+  .ai-fab{
+    position:fixed; left:16px; bottom:calc(96px + var(--safe-bottom));
+    width:50px; height:50px; border-radius:50%; z-index:45;
+    background:linear-gradient(135deg, var(--gold), #a9895a); color:var(--graphite);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 20px #00000060; cursor:pointer; border:none;
+  }
+  .ai-fab svg{width:22px; height:22px;}
+
+  /* ---------- Overlays / drawers ---------- */
   .overlay{
     position:fixed; inset:0; background:#000000a8; opacity:0; pointer-events:none;
     transition:opacity .3s; z-index:50;
   }
   .overlay.show{opacity:1; pointer-events:auto;}
+
   .drawer{
     position:fixed; left:0; right:0; bottom:0; z-index:60;
     background:var(--graphite); border-radius:22px 22px 0 0;
     border-top:1px solid #d7dbe030;
-    padding:18px 18px calc(18px + var(--safe-bottom));
+    padding:16px 18px calc(16px + var(--safe-bottom));
     transform:translateY(100%); transition:transform .35s cubic-bezier(.2,.8,.2,1);
-    max-height:80vh; display:flex; flex-direction:column;
+    max-height:85vh; display:flex; flex-direction:column;
   }
   .drawer.show{transform:translateY(0);}
-  .drawer-handle{
-    width:38px; height:4px; background:#d7dbe055; border-radius:99px;
-    margin:0 auto 14px;
+  .drawer-handle{ width:38px; height:4px; background:#d7dbe055; border-radius:99px; margin:0 auto 12px; }
+  .drawer h3{margin:0 0 10px; font-size:15.5px; color:var(--chrome);}
+
+  .step-dots{display:flex; justify-content:center; gap:6px; margin-bottom:14px;}
+  .step-dots span{width:7px; height:7px; border-radius:50%; background:#d7dbe030;}
+  .step-dots span.active{background:var(--silver); width:18px; border-radius:4px;}
+
+  .drawer-body{overflow-y:auto; flex:1; padding-bottom:4px;}
+
+  .drawer-item{ display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid #ffffff10; }
+  .drawer-item .di-name{font-size:13px; font-weight:600;}
+  .drawer-item .di-price{font-size:11px; color:var(--silver-dim); margin-top:2px;}
+  .drawer-total{ display:flex; justify-content:space-between; align-items:center; padding:12px 0 4px; font-size:14.5px; font-weight:800; color:var(--chrome); }
+  .empty-cart{text-align:center; color:var(--silver-dim); padding:26px 0; font-size:13px;}
+
+  .form-block{margin-top:8px;}
+  .form-block label{font-size:11.5px; color:var(--silver-dim); display:block; margin-bottom:6px;}
+  .form-block input, .form-block textarea{
+    width:100%; padding:11px 13px; border-radius:12px; border:1px solid #d7dbe030;
+    background:#ffffff0a; color:var(--ivory); font-family:inherit; font-size:13px;
+    margin-bottom:10px; resize:none;
   }
-  .drawer h3{margin:0 0 12px; font-size:16px; color:var(--chrome);}
-  .drawer-items{overflow-y:auto; flex:1;}
-  .drawer-item{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:10px 0; border-bottom:1px solid #ffffff10;
+  .form-block input::placeholder, .form-block textarea::placeholder{color:#ffffff55;}
+
+  .ship-option{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:12px 14px; border-radius:14px; border:1.5px solid #d7dbe030; margin-bottom:9px; cursor:pointer;
   }
-  .drawer-item .di-name{font-size:13.5px; font-weight:600;}
-  .drawer-item .di-price{font-size:11.5px; color:var(--silver-dim); margin-top:2px;}
-  .drawer-total{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:14px 0 6px; font-size:15px; font-weight:800; color:var(--chrome);
+  .ship-option.active{border-color:var(--silver); background:#ffffff0a;}
+  .ship-option .so-name{font-size:13px; font-weight:700;}
+  .ship-option .so-eta{font-size:11px; color:var(--silver-dim); margin-top:2px;}
+  .ship-option .so-price{font-size:12.5px; font-weight:700; color:var(--gold);}
+
+  .card-info-box{
+    background:#ffffff0a; border:1px solid #c9a96140; border-radius:14px; padding:14px; margin-bottom:12px;
   }
-  .form-block{margin-top:10px;}
-  .form-block label{font-size:12px; color:var(--silver-dim); display:block; margin-bottom:6px;}
-  .form-block input{
-    width:100%; padding:12px 14px; border-radius:12px; border:1px solid #d7dbe030;
-    background:#ffffff0a; color:var(--ivory); font-family:inherit; font-size:13.5px;
-    margin-bottom:10px;
+  .card-info-box .ci-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .card-info-box .ci-label{font-size:11px; color:var(--silver-dim);}
+  .card-info-box .ci-value{font-size:13.5px; font-weight:700; color:var(--chrome); direction:ltr; letter-spacing:.5px;}
+  .copy-btn{
+    border:1px solid var(--gold); color:var(--gold); background:transparent; border-radius:8px;
+    padding:4px 10px; font-size:11px; font-family:inherit; cursor:pointer;
   }
-  .form-block input::placeholder{color:#ffffff55;}
-  .checkout-btn{
-    width:100%; padding:15px; border:none; border-radius:14px;
-    background:var(--silver); color:var(--graphite); font-size:15px; font-weight:800;
-    font-family:inherit; cursor:pointer; margin-top:6px;
-    display:flex; align-items:center; justify-content:center; gap:8px;
+  .amount-highlight{
+    text-align:center; padding:14px; border-radius:14px; background:linear-gradient(135deg,var(--gold),#a9895a);
+    color:var(--graphite); font-weight:800; font-size:17px; margin-bottom:12px;
   }
-  .checkout-btn:disabled{opacity:.6;}
-  .empty-cart{text-align:center; color:var(--silver-dim); padding:30px 0; font-size:13.5px;}
-  .gateway-note{
-    font-size:11px; color:var(--silver-dim); text-align:center; margin-top:10px; line-height:1.9;
+  .amount-highlight span{display:block; font-size:11px; font-weight:600; margin-top:2px;}
+
+  .receipt-upload{
+    border:1.5px dashed #d7dbe040; border-radius:14px; padding:18px; text-align:center;
+    font-size:12px; color:var(--silver-dim); margin-bottom:12px; position:relative;
   }
-  .gateway-note b{color:var(--chrome);}
+  .receipt-upload input{position:absolute; inset:0; opacity:0; cursor:pointer;}
+  .receipt-preview{width:100%; max-height:160px; object-fit:contain; border-radius:10px; margin-top:8px;}
+
+  .order-id-box{
+    text-align:center; background:#ffffff0a; border-radius:14px; padding:16px; margin-bottom:10px;
+  }
+  .order-id-box .oid{font-size:20px; font-weight:800; color:var(--gold); direction:ltr; letter-spacing:1px; margin:6px 0;}
+  .success-icon{width:46px;height:46px;border-radius:50%;background:var(--good);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;}
+
+  .nav-row{display:flex; gap:10px; margin-top:10px;}
+  .btn{
+    flex:1; padding:14px; border:none; border-radius:14px; font-size:14px; font-weight:800;
+    font-family:inherit; cursor:pointer;
+  }
+  .btn-primary{background:var(--silver); color:var(--graphite);}
+  .btn-secondary{background:#ffffff10; color:var(--silver);}
+  .btn:disabled{opacity:.5;}
 
   .toast{
     position:fixed; top:14px; left:50%; transform:translateX(-50%) translateY(-140%);
     background:var(--silver); color:var(--graphite); padding:10px 20px; border-radius:999px;
-    font-size:13px; font-weight:700; z-index:80; transition:transform .3s;
-    white-space:nowrap;
+    font-size:12.5px; font-weight:700; z-index:90; transition:transform .3s;
+    white-space:nowrap; max-width:90vw; overflow:hidden; text-overflow:ellipsis;
   }
   .toast.show{transform:translateX(-50%) translateY(0);}
-  .spinner{
-    width:16px; height:16px; border-radius:50%;
-    border:2.5px solid #1b1b1d55; border-top-color:#1b1b1d;
-    animation:spin .7s linear infinite; display:none;
+
+  /* ---------- Product detail overlay ---------- */
+  .detail-sheet{
+    position:fixed; inset:0; z-index:70; background:var(--graphite);
+    transform:translateX(100%); transition:transform .3s cubic-bezier(.2,.8,.2,1);
+    overflow-y:auto;
   }
-  .spinner.show{display:inline-block;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+  .detail-sheet.show{transform:translateX(0);}
+  .detail-top{position:sticky; top:0; z-index:2; padding:14px; display:flex; justify-content:space-between; background:linear-gradient(180deg, var(--graphite) 70%, transparent);}
+  .detail-photo{
+    width:100%; height:220px; display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .detail-photo .ring{width:90px; height:90px; border-radius:50%; border:9px solid var(--silver); box-shadow: inset 0 0 0 2px #00000030, 0 6px 16px #00000060;}
+  .detail-photo .gem{position:absolute; top:38px; left:50%; transform:translateX(-50%) rotate(45deg); width:26px; height:26px; border-radius:4px;}
+  .detail-body{padding:6px 20px 30px;}
+  .detail-name{font-size:19px; font-weight:800; color:var(--chrome);}
+  .detail-price{font-size:17px; font-weight:800; color:var(--gold); margin-top:6px;}
+  .detail-price::after{content:' تومان'; font-size:12px; color:var(--silver-dim); font-weight:500;}
+  .feature-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:16px 0; }
+  .feature-item{ background:#ffffff08; border-radius:10px; padding:9px 11px; }
+  .feature-item .fk{font-size:10.5px; color:var(--silver-dim);}
+  .feature-item .fv{font-size:12.5px; font-weight:700; margin-top:2px;}
+  .size-label{font-size:12px; color:var(--silver-dim); margin:14px 0 8px;}
+  .size-chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .size-chip{
+    padding:7px 14px; border-radius:10px; border:1.5px solid #d7dbe030; font-size:12.5px; cursor:pointer; color:var(--silver-dim);
+  }
+  .size-chip.active{border-color:var(--silver); color:var(--chrome); background:#ffffff0a; font-weight:700;}
+  .detail-qty-row{display:flex; align-items:center; justify-content:space-between; margin:18px 0;}
+  .detail-add-btn{
+    width:100%; padding:15px; border:none; border-radius:14px; background:var(--silver); color:var(--graphite);
+    font-size:14.5px; font-weight:800; font-family:inherit; cursor:pointer; margin-top:6px;
+  }
+  .share-btn-inline{
+    display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:11px; margin-top:8px;
+    border:1px solid #d7dbe030; border-radius:12px; background:transparent; color:var(--silver-dim); font-size:12px; font-family:inherit; cursor:pointer;
+  }
+  .review-summary{display:flex; align-items:center; gap:10px; margin:14px 0;}
+  .review-summary .avg{font-size:26px; font-weight:800; color:var(--gold);}
+  .review-item{ padding:12px 0; border-bottom:1px solid #ffffff10; }
+  .review-item .ru{font-size:12.5px; font-weight:700;}
+  .review-item .rs{color:var(--gold); font-size:11px; margin-top:2px;}
+  .review-item .rc{font-size:12px; color:var(--silver-dim); margin-top:4px; line-height:1.7;}
+
+  /* ---------- AI chat panel ---------- */
+  .chat-panel{
+    position:fixed; left:12px; right:12px; bottom:calc(16px + var(--safe-bottom)); top:60px; z-index:80;
+    background:var(--graphite); border:1px solid #d7dbe030; border-radius:20px;
+    display:flex; flex-direction:column; overflow:hidden;
+    transform:scale(.9); opacity:0; pointer-events:none; transition:.25s;
+    transform-origin:bottom left;
+  }
+  .chat-panel.show{transform:scale(1); opacity:1; pointer-events:auto;}
+  .chat-head{padding:14px; border-bottom:1px solid #ffffff10; display:flex; justify-content:space-between; align-items:center;}
+  .chat-head b{font-size:13.5px;}
+  .chat-head span{font-size:10.5px; color:var(--silver-dim);}
+  .chat-msgs{flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px;}
+  .msg{max-width:80%; padding:9px 13px; border-radius:14px; font-size:12.5px; line-height:1.7;}
+  .msg.bot{background:#ffffff0e; align-self:flex-start; border-bottom-left-radius:4px;}
+  .msg.user{background:var(--silver); color:var(--graphite); align-self:flex-end; border-bottom-right-radius:4px; font-weight:600;}
+  .chat-input-row{display:flex; gap:8px; padding:12px; border-top:1px solid #ffffff10;}
+  .chat-input-row input{
+    flex:1; padding:11px 14px; border-radius:999px; border:1px solid #d7dbe030;
+    background:#ffffff0a; color:var(--ivory); font-family:inherit; font-size:13px;
+  }
+  .chat-send{width:40px; height:40px; border-radius:50%; border:none; background:var(--silver); color:var(--graphite); font-size:16px; cursor:pointer;}
+  .quick-q{display:flex; gap:6px; flex-wrap:wrap; padding:0 14px 10px;}
+  .quick-q span{
+    font-size:11px; padding:6px 11px; border-radius:999px; border:1px solid #d7dbe030; color:var(--silver-dim); cursor:pointer;
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="brand"><span class="ring-mark"></span>گالری نقره محمودی</div>
-  <div class="tagline">زیورآلات نقره اصل، دست‌ساز و آبکاری‌شده</div>
+  <div class="header-row">
+    <div class="icon-btn" id="searchBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    <div class="brand-center">
+      <img class="logo-img" src="data:image/jpeg;base64,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" alt="لوگو">
+      <div class="brand">گالری نقره محمودی</div>
+      <div class="tagline">زیورآلات نقره اصل، دست‌ساز و آبکاری‌شده</div>
+    </div>
+    <div class="icon-btn" id="shareBotBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+    </div>
+  </div>
+
+  <div class="loyalty-strip">
+    <span>امتیاز وفاداری شما: <b id="loyaltyPoints">۱۲۰</b> امتیاز</span>
+    <span>با هر خرید ۵٪ امتیاز بگیرید</span>
+  </div>
+
+  <div class="search-wrap" id="searchWrap">
+    <input type="text" id="searchInput" placeholder="جستجوی محصول... مثلاً «گردنبند عقیق»">
+  </div>
 </header>
 
 <div class="chips" id="chips"></div>
@@ -228,60 +353,167 @@
   <div class="total" id="cartTotal">۰ تومان</div>
 </div>
 
+<button class="ai-fab" id="aiFab">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</button>
+
 <div class="overlay" id="overlay"></div>
+
+<!-- Checkout / Cart drawer (multi-step) -->
 <div class="drawer" id="drawer">
   <div class="drawer-handle"></div>
-  <h3>سبد خرید شما</h3>
-  <div class="drawer-items" id="drawerItems"></div>
-  <div class="drawer-total">
-    <span>جمع کل</span>
-    <span id="drawerTotal">۰ تومان</span>
-  </div>
+  <div class="step-dots" id="stepDots"></div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
 
-  <div class="form-block" id="checkoutForm">
-    <label>شماره موبایل برای پیگیری سفارش</label>
-    <input type="tel" id="phoneInput" placeholder="۰۹xxxxxxxxx" inputmode="numeric">
+<!-- Product detail full-screen sheet -->
+<div class="detail-sheet" id="detailSheet">
+  <div class="detail-top">
+    <div class="icon-btn" id="detailCloseBtn">✕</div>
+    <div style="width:38px"></div>
   </div>
+  <div id="detailContent"></div>
+</div>
 
-  <button class="checkout-btn" id="checkoutBtn">
-    <span class="spinner" id="paySpinner"></span>
-    <span id="checkoutLabel">پرداخت و ثبت سفارش</span>
-  </button>
-  <div class="gateway-note">پرداخت امن از طریق درگاه <b>زرین‌پال</b></div>
+<!-- AI chat panel -->
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <div><b>دستیار هوشمند گالری محمودی</b><br><span>معمولاً در کمتر از یک دقیقه پاسخ می‌دهد</span></div>
+    <div class="icon-btn" id="chatCloseBtn">✕</div>
+  </div>
+  <div class="chat-msgs" id="chatMsgs"></div>
+  <div class="quick-q" id="quickQ"></div>
+  <div class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="سوال خود را بنویسید...">
+    <button class="chat-send" id="chatSendBtn">➤</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+/* ================= Telegram WebApp bootstrap ================= */
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) {
-  tg.ready();
-  tg.expand();
-  try {
-    tg.setHeaderColor('#1b1b1d');
-    tg.setBackgroundColor('#1b1b1d');
-  } catch(e) {}
+  tg.ready(); tg.expand();
+  try { tg.setHeaderColor('#1b1b1d'); tg.setBackgroundColor('#1b1b1d'); } catch(e) {}
 }
 
-const BACKEND_URL = 'https://YOUR-BACKEND-DOMAIN.example.com/api/create-payment';
-const DEMO_MODE = true;
+/* =================================================================
+   نکات پیاده‌سازی که باید جایگزین شوند:
+   1) BOT_LINK: لینک واقعی ربات تلگرامت (برای دکمه اشتراک‌گذاری)
+   2) CARD_INFO: شماره کارت واقعی برای واریز کارت‌به‌کارت (الان نمونه است)
+   3) AI_BACKEND_URL: اگر بک‌اند هوش مصنوعی واقعی ساختی، آدرسش را اینجا بگذار
+      و AI_DEMO_MODE را false کن. تا آن زمان پاسخ‌های آماده (FAQ) کار می‌کنند.
+   4) آپلود رسید: چون Telegram Mini App نمی‌تواند فایل بزرگ (عکس) را مستقیم
+      با sendData بفرستد (محدودیت حجم پیام)، این صفحه فقط سفارش و شماره
+      پیگیری را برای ربات می‌فرستد؛ از کاربر خواسته می‌شود عکس رسید را
+      به‌صورت پیام عادی برای ربات بفرستد (با ذکر همان شماره پیگیری).
+================================================================= */
+const BOT_LINK = 'https://t.me/mahmoudisilvershop_bot';
+const CARD_INFO = { number: '۶۰۳۷-۹۹۹۱-۲۳۴۵-۶۷۸۹', owner: 'علی محمودی', bank: 'بانک ملی (نمونه - جایگزین شود)' };
+const AI_BACKEND_URL = 'https://YOUR-BACKEND-DOMAIN.example.com/api/ai-chat';
+const AI_DEMO_MODE = true;
 
+/* ---------------- Data ---------------- */
+const RING_SIZES = ['۴۹','۵۱','۵۳','۵۵','۵۷'];
 const PRODUCTS = [
-  { id:1, cat:'انگشتر', name:'انگشتر نقره فیروزه', notes:'نقره ۹۲۵ عیار، نگین فیروزه نیشابوری', price:1250000, gem:'#2f8a86' },
-  { id:2, cat:'انگشتر', name:'انگشتر نقره سولیتر', notes:'نقره ۹۲۵ عیار، آبکاری رودیوم', price:980000, gem:'#c9ced4' },
-  { id:3, cat:'دستبند', name:'دستبند زنجیری نقره', notes:'نقره خالص، طرح ظریف زنانه', price:1450000, gem:'#8a4b3a' },
-  { id:4, cat:'دستبند', name:'دستبند مردانه کارتیه', notes:'نقره ۹۲۵ عیار، طرح مردانه', price:1680000, gem:'#4a4f57' },
-  { id:5, cat:'گردنبند', name:'گردنبند نگین عقیق', notes:'نقره اصل، نگین عقیق قرمز یمن', price:1890000, gem:'#7a2e2e' },
-  { id:6, cat:'گوشواره', name:'گوشواره مروارید نقره', notes:'نقره ۹۲۵ عیار، مروارید غلتکی', price:990000, gem:'#e8e4da' },
+  { id:1, cat:'انگشتر', name:'انگشتر نقره فیروزه', notes:'نقره ۹۲۵ عیار، نگین فیروزه نیشابوری', price:1250000, gem:'#2f8a86',
+    sizes:RING_SIZES, features:{'جنس':'نقره ۹۲۵ عیار','وزن':'۳.۲ گرم','نگین':'فیروزه نیشابوری','پوشش':'آبکاری رودیوم'},
+    reviews:[{user:'زهرا.م',stars:5,comment:'کیفیتش عالی بود، دقیقاً مثل عکس بود و بسته‌بندی شیکی داشت.'},{user:'الف.کریمی',stars:4,comment:'زیبا و شیک، فقط کاش سایزبندی دقیق‌تر بود.'},{user:'مهسا',stars:5,comment:'برای هدیه گرفتم، خیلی خوشش اومد.'}] },
+  { id:2, cat:'انگشتر', name:'انگشتر نقره سولیتر', notes:'نقره ۹۲۵ عیار، آبکاری رودیوم', price:980000, gem:'#c9ced4',
+    sizes:RING_SIZES, features:{'جنس':'نقره ۹۲۵ عیار','وزن':'۲.۸ گرم','نگین':'زیرکونیا سفید','پوشش':'آبکاری رودیوم'},
+    reviews:[{user:'نیلوفر',stars:5,comment:'برق میزنه، عالیه.'},{user:'سارا ر.',stars:4,comment:'قشنگه ولی کمی ظریف‌تر از انتظارم بود.'}] },
+  { id:3, cat:'دستبند', name:'دستبند زنجیری نقره', notes:'نقره خالص، طرح ظریف زنانه', price:1450000, gem:'#8a4b3a',
+    sizes:['تک‌سایز (قابل تنظیم)'], features:{'جنس':'نقره خالص ۹۲۵','وزن':'۵.۱ گرم','طول':'۱۶ تا ۱۹ سانتی‌متر','قفل':'لابستر امن'},
+    reviews:[{user:'پریسا',stars:5,comment:'ظریف و قابل تنظیمه، خیلی راحت روی مچ میشینه.'},{user:'رها',stars:5,comment:'کیفیت ساختش حرف نداره.'}] },
+  { id:4, cat:'دستبند', name:'دستبند مردانه کارتیه', notes:'نقره ۹۲۵ عیار، طرح مردانه', price:1680000, gem:'#4a4f57',
+    sizes:['۱۸ سانتی‌متر','۲۰ سانتی‌متر','۲۲ سانتی‌متر'], features:{'جنس':'نقره ۹۲۵ عیار','وزن':'۱۲ گرم','طرح':'کارتیه کلاسیک','پوشش':'آبکاری تیتانیوم'},
+    reviews:[{user:'امیر.ت',stars:4,comment:'سنگینه به معنی خوبش، خیلی محکم به‌نظر میاد.'},{user:'رضا کاظمی',stars:5,comment:'دقیقاً همونی بود که میخواستم.'}] },
+  { id:5, cat:'گردنبند', name:'گردنبند نگین عقیق', notes:'نقره اصل، نگین عقیق قرمز یمن', price:1890000, gem:'#7a2e2e',
+    sizes:['۴۰ سانتی‌متر','۴۵ سانتی‌متر','۵۰ سانتی‌متر'], features:{'جنس':'نقره اصل ۹۲۵','وزن':'۶.۴ گرم','نگین':'عقیق قرمز یمنی','گواهی اصالت':'دارد'},
+    reviews:[{user:'مریم د.',stars:5,comment:'رنگ نگینش فوق‌العاده‌ست، عکس واقعی رو کم داره نشون میده.'},{user:'هستی',stars:4,comment:'زیبا بود، کمی دیر رسید ولی می‌ارزید.'}] },
+  { id:6, cat:'گوشواره', name:'گوشواره مروارید نقره', notes:'نقره ۹۲۵ عیار، مروارید غلتکی', price:990000, gem:'#e8e4da',
+    sizes:null, features:{'جنس':'نقره ۹۲۵ عیار','وزن':'۲.۱ گرم (جفت)','نوع مروارید':'غلتکی طبیعی','قفل':'پیچی امن'},
+    reviews:[{user:'الناز',stars:5,comment:'سبک و شیکه، برای استفاده روزمره عالیه.'},{user:'فاطمه.ک',stars:5,comment:'مروارید‌هاش خیلی خوش‌رنگه.'}] },
 ];
 const CATS = ['همه', 'انگشتر', 'دستبند', 'گردنبند', 'گوشواره'];
+const SHIPPING_METHODS = [
+  { id:'post', name:'پست پیشتاز', eta:'۳ تا ۵ روز کاری', cost:45000 },
+  { id:'tipax', name:'تیپاکس', eta:'۲ تا ۳ روز کاری', cost:55000 },
+  { id:'courier', name:'پیک موتوری (فقط تهران)', eta:'همان روز', cost:60000 },
+];
+const AI_FAQ = [
+  { keys:['ارسال','تحویل','چند روز'], answer:'زمان ارسال بسته به روش انتخابی بین همان‌روز (پیک تهران) تا ۵ روز کاری (پست پیشتاز) متغیر است.' },
+  { keys:['عیار','اصالت','نقره'], answer:'تمام محصولات گالری از نقره ۹۲۵ عیار (استرلینگ) ساخته شده‌اند و همراه با مهر عیار ارسال می‌شوند.' },
+  { keys:['مرجوع','گارانتی','پس دادن'], answer:'تا ۷ روز پس از دریافت، در صورت سالم بودن کالا امکان مرجوعی وجود دارد.' },
+  { keys:['سایز','اندازه'], answer:'برای انگشترها سایز استاندارد ایرانی (۴۹ تا ۵۷) موجود است؛ اگر مطمئن نیستید، سایز میانی معمولاً مناسب اکثر افراد است.' },
+  { keys:['پرداخت','کارت به کارت','واریز'], answer:'در حال حاضر پرداخت از طریق کارت‌به‌کارت انجام می‌شود؛ بعد از واریز، رسید را برای ربات ارسال کنید تا سفارش تایید شود.' },
+];
 
 let activeCat = 'همه';
-let cart = {};
+let searchQuery = '';
+let cart = {};           // id -> {qty, size}
+let loyaltyPoints = 120; // demo starting points
+let currentDetailProduct = null;
+let selectedDetailSize = null;
+let detailQty = 1;
 
+let checkoutStep = 0; // 0 cart, 1 address, 2 shipping, 3 payment, 4 confirm
+let address = { name:'', phone:'', city:'', full:'', postal:'' };
+let selectedShipping = null;
+let last4 = '';
+let receiptDataUrl = null;
+let lastOrderId = null;
+
+/* ---------------- Helpers ---------------- */
 const faDigits = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
-const formatPrice = n => faDigits(n.toLocaleString('en-US'));
+const formatPrice = n => faDigits(Math.round(n).toLocaleString('en-US'));
+function starString(avg){
+  const full = Math.round(avg);
+  return '★★★★★☆☆☆☆☆'.slice(5-full, 10-full);
+}
+function avgRating(p){
+  if (!p.reviews || !p.reviews.length) return 0;
+  return p.reviews.reduce((s,r)=>s+r.stars,0) / p.reviews.length;
+}
+function genOrderId(){
+  return 'MS-' + faDigits(Math.floor(100000 + Math.random()*899999));
+}
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
 
+/* ---------------- Search toggle ---------------- */
+document.getElementById('searchBtn').onclick = () => {
+  const w = document.getElementById('searchWrap');
+  w.classList.toggle('open');
+  if (w.classList.contains('open')) document.getElementById('searchInput').focus();
+};
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  renderProducts();
+});
+
+/* ---------------- Share bot ---------------- */
+document.getElementById('shareBotBtn').onclick = () => {
+  const text = 'گالری نقره محمودی رو ببین 🤍🪞 زیورآلات نقره اصل با ارسال سریع';
+  if (navigator.share) {
+    navigator.share({ title:'گالری نقره محمودی', text, url: BOT_LINK }).catch(()=>{});
+  } else if (tg && tg.openTelegramLink) {
+    tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(BOT_LINK) + '&text=' + encodeURIComponent(text));
+  } else {
+    navigator.clipboard && navigator.clipboard.writeText(BOT_LINK);
+    showToast('لینک فروشگاه کپی شد');
+  }
+};
+
+/* ---------------- Render: chips ---------------- */
 function renderChips(){
   const el = document.getElementById('chips');
   el.innerHTML = '';
@@ -294,21 +526,31 @@ function renderChips(){
   });
 }
 
+/* ---------------- Render: products ---------------- */
 function renderProducts(){
   const el = document.getElementById('product-list');
   el.innerHTML = '';
-  const list = PRODUCTS.filter(p => activeCat === 'همه' || p.cat === activeCat);
+  let list = PRODUCTS.filter(p => activeCat === 'همه' || p.cat === activeCat);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(p => p.name.toLowerCase().includes(q) || p.notes.toLowerCase().includes(q) || p.cat.includes(q));
+  }
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-cart">محصولی با این مشخصات پیدا نشد</div>';
+    return;
+  }
   list.forEach(p => {
-    const qty = cart[p.id] || 0;
+    const avg = avgRating(p);
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `
-      <div class="jewel">
+      <div class="photo" style="background:linear-gradient(135deg, ${p.gem}55, #00000040)">
         <div class="ring"></div>
         <div class="gem" style="background:${p.gem}"></div>
       </div>
       <div class="info">
         <div class="name">${p.name}</div>
+        <div class="rating-row"><span class="stars">${starString(avg)}</span><span class="rating-count">(${faDigits(p.reviews.length)} نظر)</span></div>
         <div class="notes">${p.notes}</div>
         <div class="row-bottom">
           <div class="price">${formatPrice(p.price)}</div>
@@ -316,49 +558,115 @@ function renderProducts(){
         </div>
       </div>
     `;
+    card.addEventListener('click', (e) => { openDetail(p.id); });
     el.appendChild(card);
-    renderQtyControl(p.id, qty);
+    renderQtyControl(p.id, cartQtyForProduct(p.id));
   });
+}
+
+function cartQtyForProduct(id){
+  let total = 0;
+  Object.keys(cart).forEach(key => { if (cart[key].id === id) total += cart[key].qty; });
+  return total;
 }
 
 function renderQtyControl(id, qty){
   const holder = document.getElementById('qty-' + id);
   if (!holder) return;
-  if (qty > 0) {
-    holder.innerHTML = `
-      <div class="stepper">
-        <button data-act="inc">+</button>
-        <span>${faDigits(qty)}</span>
-        <button data-act="dec">−</button>
-      </div>`;
-    holder.querySelector('[data-act="inc"]').onclick = () => changeQty(id, 1);
-    holder.querySelector('[data-act="dec"]').onclick = () => changeQty(id, -1);
-  } else {
-    holder.innerHTML = `<button class="add-btn">+</button>`;
-    holder.querySelector('.add-btn').onclick = () => changeQty(id, 1);
-  }
+  holder.innerHTML = `<button class="add-btn" data-id="${id}">+</button>`;
+  holder.querySelector('.add-btn').onclick = (e) => { e.stopPropagation(); openDetail(id); };
 }
 
-function changeQty(id, delta){
-  const newQty = (cart[id] || 0) + delta;
-  if (newQty <= 0) { delete cart[id]; } else { cart[id] = newQty; }
+/* ---------------- Product detail sheet ---------------- */
+function openDetail(id){
+  const p = PRODUCTS.find(p => p.id === id);
+  if (!p) return;
+  currentDetailProduct = p;
+  selectedDetailSize = p.sizes ? p.sizes[0] : null;
+  detailQty = 1;
+  renderDetail();
+  document.getElementById('detailSheet').classList.add('show');
   if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-  if (delta > 0) showToast('به سبد اضافه شد');
-  renderQtyControl(id, cart[id] || 0);
-  renderCartBar();
-  renderDrawer();
+}
+document.getElementById('detailCloseBtn').onclick = () => {
+  document.getElementById('detailSheet').classList.remove('show');
+};
+
+function renderDetail(){
+  const p = currentDetailProduct;
+  const avg = avgRating(p);
+  const el = document.getElementById('detailContent');
+  let sizeHtml = '';
+  if (p.sizes) {
+    sizeHtml = `<div class="size-label">انتخاب سایز</div><div class="size-chips" id="sizeChips">` +
+      p.sizes.map(s => `<div class="size-chip${s===selectedDetailSize?' active':''}" data-size="${s}">${s}</div>`).join('') +
+      `</div>`;
+  }
+  const featuresHtml = Object.entries(p.features).map(([k,v]) =>
+    `<div class="feature-item"><div class="fk">${k}</div><div class="fv">${v}</div></div>`).join('');
+  const reviewsHtml = p.reviews.map(r =>
+    `<div class="review-item"><div class="ru">${r.user}</div><div class="rs">${starString(r.stars)}</div><div class="rc">${r.comment}</div></div>`).join('');
+
+  el.innerHTML = `
+    <div class="detail-photo" style="background:linear-gradient(135deg, ${p.gem}55, #00000040)">
+      <div class="ring"></div><div class="gem" style="background:${p.gem}"></div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-name">${p.name}</div>
+      <div class="review-summary"><span class="avg">${faDigits(avg.toFixed(1))}</span><div><div class="stars">${starString(avg)}</div><div class="rating-count">${faDigits(p.reviews.length)} نظر</div></div></div>
+      <div class="detail-price">${formatPrice(p.price)}</div>
+      <div class="feature-grid">${featuresHtml}</div>
+      ${sizeHtml}
+      <div class="detail-qty-row">
+        <span style="font-size:12.5px;color:var(--silver-dim)">تعداد</span>
+        <div class="stepper"><button id="dQtyDec">−</button><span id="dQtyVal">${faDigits(detailQty)}</span><button id="dQtyInc">+</button></div>
+      </div>
+      <button class="detail-add-btn" id="detailAddBtn">افزودن به سبد خرید</button>
+      <button class="share-btn-inline" id="detailShareBtn">↗ اشتراک‌گذاری این محصول</button>
+      <div style="margin-top:22px; font-size:13.5px; font-weight:700; color:var(--chrome);">نظرات کاربران</div>
+      ${reviewsHtml}
+    </div>
+  `;
+
+  if (p.sizes) {
+    el.querySelectorAll('.size-chip').forEach(chip => {
+      chip.onclick = () => { selectedDetailSize = chip.dataset.size; renderDetail(); };
+    });
+  }
+  document.getElementById('dQtyInc').onclick = () => { detailQty++; document.getElementById('dQtyVal').textContent = faDigits(detailQty); };
+  document.getElementById('dQtyDec').onclick = () => { if (detailQty>1){ detailQty--; document.getElementById('dQtyVal').textContent = faDigits(detailQty);} };
+  document.getElementById('detailAddBtn').onclick = () => {
+    const key = p.id + '|' + (selectedDetailSize || '');
+    if (!cart[key]) cart[key] = { id:p.id, size:selectedDetailSize, qty:0 };
+    cart[key].qty += detailQty;
+    if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    showToast('به سبد خرید اضافه شد');
+    renderProducts();
+    renderCartBar();
+    document.getElementById('detailSheet').classList.remove('show');
+  };
+  document.getElementById('detailShareBtn').onclick = () => {
+    const text = `${p.name} را از گالری نقره محمودی ببین`;
+    if (navigator.share) navigator.share({ title:p.name, text, url:BOT_LINK }).catch(()=>{});
+    else { navigator.clipboard && navigator.clipboard.writeText(text + ' ' + BOT_LINK); showToast('لینک محصول کپی شد'); }
+  };
 }
 
+/* ---------------- Cart summary ---------------- */
+function cartLines(){
+  return Object.entries(cart).map(([key, item]) => {
+    const p = PRODUCTS.find(p => p.id === item.id);
+    return { key, p, qty:item.qty, size:item.size };
+  }).filter(l => l.p && l.qty > 0);
+}
 function cartSummary(){
   let count = 0, total = 0;
-  Object.entries(cart).forEach(([id, qty]) => {
-    const p = PRODUCTS.find(p => p.id == id);
-    if (!p) return;
-    count += qty;
-    total += qty * p.price;
-  });
+  cartLines().forEach(l => { count += l.qty; total += l.qty * l.p.price; });
   return { count, total };
 }
+function shippingCost(){ return selectedShipping ? selectedShipping.cost : 0; }
+function grandTotal(){ return cartSummary().total + shippingCost(); }
+function rewardForOrder(){ return Math.round(cartSummary().total * 0.02 / 1000) * 1000; }
 
 function renderCartBar(){
   const { count, total } = cartSummary();
@@ -368,140 +676,299 @@ function renderCartBar(){
   bar.classList.toggle('show', count > 0);
   updateMainButton(count, total);
 }
+document.getElementById('cartBar').onclick = () => { checkoutStep = 0; openDrawer(); };
 
-function renderDrawer(){
-  const el = document.getElementById('drawerItems');
-  const { total, count } = cartSummary();
-  document.getElementById('drawerTotal').textContent = formatPrice(total) + ' تومان';
-  el.innerHTML = '';
-  if (count === 0) {
-    el.innerHTML = '<div class="empty-cart">سبد خرید شما خالی است</div>';
-    return;
-  }
-  Object.entries(cart).forEach(([id, qty]) => {
-    const p = PRODUCTS.find(p => p.id == id);
-    if (!p) return;
-    const row = document.createElement('div');
-    row.className = 'drawer-item';
-    row.innerHTML = `
-      <div>
-        <div class="di-name">${p.name}</div>
-        <div class="di-price">${faDigits(qty)} × ${formatPrice(p.price)} تومان</div>
-      </div>
-      <div class="stepper">
-        <button data-act="inc">+</button>
-        <span>${faDigits(qty)}</span>
-        <button data-act="dec">−</button>
-      </div>
-    `;
-    row.querySelector('[data-act="inc"]').onclick = () => changeQty(p.id, 1);
-    row.querySelector('[data-act="dec"]').onclick = () => changeQty(p.id, -1);
-    el.appendChild(row);
-  });
-}
-
+/* ---------------- Drawer (multi-step checkout) ---------------- */
 const overlay = document.getElementById('overlay');
 const drawer = document.getElementById('drawer');
-function openDrawer(){
-  renderDrawer();
-  overlay.classList.add('show');
-  drawer.classList.add('show');
-}
-function closeDrawer(){
-  overlay.classList.remove('show');
-  drawer.classList.remove('show');
-}
-document.getElementById('cartBar').onclick = openDrawer;
+function openDrawer(){ renderStepDots(); renderDrawerStep(); overlay.classList.add('show'); drawer.classList.add('show'); }
+function closeDrawer(){ overlay.classList.remove('show'); drawer.classList.remove('show'); }
 overlay.onclick = closeDrawer;
 
-let toastTimer;
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+function renderStepDots(){
+  const labels = ['سبد','آدرس','ارسال','پرداخت','تایید'];
+  document.getElementById('stepDots').innerHTML = labels.map((_,i) =>
+    `<span class="${i===checkoutStep?'active':''}"></span>`).join('');
 }
 
-function setPaying(isPaying){
-  document.getElementById('paySpinner').classList.toggle('show', isPaying);
-  document.getElementById('checkoutLabel').textContent = isPaying ? 'در حال اتصال به درگاه...' : 'پرداخت و ثبت سفارش';
-  document.getElementById('checkoutBtn').disabled = isPaying;
+function goToStep(n){
+  checkoutStep = n;
+  renderStepDots();
+  renderDrawerStep();
 }
 
-async function doCheckout(){
+function renderDrawerStep(){
+  const body = document.getElementById('drawerBody');
+  if (checkoutStep === 0) body.innerHTML = stepCartHtml();
+  else if (checkoutStep === 1) body.innerHTML = stepAddressHtml();
+  else if (checkoutStep === 2) body.innerHTML = stepShippingHtml();
+  else if (checkoutStep === 3) body.innerHTML = stepPaymentHtml();
+  else if (checkoutStep === 4) body.innerHTML = stepConfirmHtml();
+  bindStepEvents();
+}
+
+function stepCartHtml(){
+  const lines = cartLines();
+  const { total } = cartSummary();
+  if (!lines.length) return `<h3>سبد خرید شما</h3><div class="empty-cart">سبد خرید شما خالی است</div>`;
+  const itemsHtml = lines.map(l => `
+    <div class="drawer-item">
+      <div>
+        <div class="di-name">${l.p.name}${l.size ? ' · ' + l.size : ''}</div>
+        <div class="di-price">${faDigits(l.qty)} × ${formatPrice(l.p.price)} تومان</div>
+      </div>
+      <div class="stepper">
+        <button data-key="${l.key}" data-act="inc">+</button>
+        <span>${faDigits(l.qty)}</span>
+        <button data-key="${l.key}" data-act="dec">−</button>
+      </div>
+    </div>`).join('');
+  return `<h3>سبد خرید شما</h3>${itemsHtml}
+    <div class="drawer-total"><span>جمع کالاها</span><span>${formatPrice(total)} تومان</span></div>
+    <div class="nav-row"><button class="btn btn-primary" id="toAddressBtn">ادامه · تکمیل خرید</button></div>`;
+}
+
+function stepAddressHtml(){
+  return `<h3>اطلاعات گیرنده</h3>
+    <div class="form-block">
+      <label>نام و نام خانوادگی</label><input id="addrName" value="${address.name}" placeholder="مثلاً سارا محمدی">
+      <label>شماره موبایل</label><input id="addrPhone" inputmode="numeric" value="${address.phone}" placeholder="۰۹xxxxxxxxx">
+      <label>استان و شهر</label><input id="addrCity" value="${address.city}" placeholder="مثلاً تهران">
+      <label>آدرس کامل</label><textarea id="addrFull" rows="3" placeholder="خیابان، کوچه، پلاک، واحد">${address.full}</textarea>
+      <label>کد پستی</label><input id="addrPostal" inputmode="numeric" value="${address.postal}" placeholder="۱۰ رقمی">
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="backToCartBtn">بازگشت</button>
+      <button class="btn btn-primary" id="toShippingBtn">ادامه</button>
+    </div>`;
+}
+
+function stepShippingHtml(){
+  const optsHtml = SHIPPING_METHODS.map(m => `
+    <div class="ship-option${selectedShipping && selectedShipping.id===m.id ? ' active':''}" data-id="${m.id}">
+      <div><div class="so-name">${m.name}</div><div class="so-eta">${m.eta}</div></div>
+      <div class="so-price">${formatPrice(m.cost)} تومان</div>
+    </div>`).join('');
+  return `<h3>روش ارسال</h3>${optsHtml}
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="backToAddrBtn">بازگشت</button>
+      <button class="btn btn-primary" id="toPaymentBtn" ${selectedShipping?'':'disabled'}>ادامه</button>
+    </div>`;
+}
+
+function stepPaymentHtml(){
+  return `<h3>پرداخت کارت‌به‌کارت</h3>
+    <div class="amount-highlight">${formatPrice(grandTotal())} تومان<span>مبلغ کل قابل پرداخت (کالا + ارسال)</span></div>
+    <div class="card-info-box">
+      <div class="ci-row"><span class="ci-label">بانک</span><span class="ci-value">${CARD_INFO.bank}</span></div>
+      <div class="ci-row"><span class="ci-label">شماره کارت</span><span class="ci-value" id="cardNumberVal">${CARD_INFO.number}</span></div>
+      <div class="ci-row"><span class="ci-label">به نام</span><span class="ci-value">${CARD_INFO.owner}</span></div>
+      <button class="copy-btn" id="copyCardBtn">کپی شماره کارت</button>
+    </div>
+    <div class="form-block">
+      <label>۴ رقم آخر کارتی که واریز کردید</label>
+      <input id="last4Input" inputmode="numeric" maxlength="4" value="${last4}" placeholder="مثلاً ۱۲۳۴">
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="backToShipBtn">بازگشت</button>
+      <button class="btn btn-primary" id="toConfirmBtn">ادامه</button>
+    </div>`;
+}
+
+function stepConfirmHtml(){
+  if (lastOrderId) {
+    return `<div class="success-icon">✓</div>
+      <div class="order-id-box">
+        <div style="font-size:12.5px;color:var(--silver-dim)">شماره پیگیری سفارش شما</div>
+        <div class="oid">${lastOrderId}</div>
+        <div style="font-size:11.5px;color:var(--silver-dim); line-height:2;">
+          لطفاً تصویر رسید واریزی را همراه با همین شماره پیگیری، به‌صورت پیام برای ربات ارسال کنید تا سفارش شما تایید شود.<br>
+          🎁 با این خرید <b style="color:var(--gold)">${faDigits(rewardForOrder()/1000)}</b> امتیاز به حساب وفاداری شما اضافه می‌شود.
+        </div>
+      </div>
+      <div class="nav-row"><button class="btn btn-primary" id="closeAfterOrderBtn">بازگشت به فروشگاه</button></div>`;
+  }
   const { count, total } = cartSummary();
-  if (count === 0) return;
+  return `<h3>بررسی نهایی سفارش</h3>
+    <div class="drawer-item"><div class="di-name">تعداد اقلام</div><div class="di-price">${faDigits(count)}</div></div>
+    <div class="drawer-item"><div class="di-name">جمع کالاها</div><div class="di-price">${formatPrice(total)} تومان</div></div>
+    <div class="drawer-item"><div class="di-name">هزینه ارسال (${selectedShipping?selectedShipping.name:''})</div><div class="di-price">${formatPrice(shippingCost())} تومان</div></div>
+    <div class="drawer-total"><span>مبلغ نهایی</span><span>${formatPrice(grandTotal())} تومان</span></div>
+    <div class="receipt-upload">
+      📎 در صورت تمایل، تصویر رسید را همین‌جا برای پیش‌نمایش خودتان انتخاب کنید (اختیاری)
+      <input type="file" accept="image/*" id="receiptInput">
+      <img id="receiptPreview" class="receipt-preview" style="display:none">
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="backToPayBtn">بازگشت</button>
+      <button class="btn btn-primary" id="finalSubmitBtn">ثبت نهایی سفارش</button>
+    </div>`;
+}
 
-  const phone = document.getElementById('phoneInput').value.trim();
-  if (!/^0?9\d{9}$/.test(phone)) {
-    showToast('شماره موبایل را درست وارد کنید');
-    return;
+function bindStepEvents(){
+  if (checkoutStep === 0) {
+    document.querySelectorAll('#drawerBody [data-act]').forEach(btn => {
+      btn.onclick = () => {
+        const key = btn.dataset.key;
+        const delta = btn.dataset.act === 'inc' ? 1 : -1;
+        cart[key].qty += delta;
+        if (cart[key].qty <= 0) delete cart[key];
+        renderDrawerStep(); renderProducts(); renderCartBar();
+      };
+    });
+    const toAddr = document.getElementById('toAddressBtn');
+    if (toAddr) toAddr.onclick = () => goToStep(1);
   }
-
-  const order = Object.entries(cart).map(([id, qty]) => {
-    const p = PRODUCTS.find(p => p.id == id);
-    return { id: p.id, name: p.name, qty, price: p.price };
-  });
-
-  const telegramUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user
-    ? tg.initDataUnsafe.user
-    : null;
-
-  const payload = { order, total, phone, telegramUser };
-
-  setPaying(true);
-  try {
-    if (DEMO_MODE) {
-      await new Promise(res => setTimeout(res, 900));
-      if (tg) {
-        tg.HapticFeedback && tg.HapticFeedback.notificationOccurred('success');
-        tg.sendData(JSON.stringify(payload));
-        tg.close();
-      } else {
-        showToast('سفارش ثبت شد · در حالت آزمایشی بدون اتصال به زرینپال');
-        cart = {};
-        closeDrawer();
-        renderProducts();
-        renderCartBar();
+  if (checkoutStep === 1) {
+    document.getElementById('backToCartBtn').onclick = () => goToStep(0);
+    document.getElementById('toShippingBtn').onclick = () => {
+      address.name = document.getElementById('addrName').value.trim();
+      address.phone = document.getElementById('addrPhone').value.trim();
+      address.city = document.getElementById('addrCity').value.trim();
+      address.full = document.getElementById('addrFull').value.trim();
+      address.postal = document.getElementById('addrPostal').value.trim();
+      if (!address.name || !/^0?9\d{9}$/.test(address.phone) || !address.city || !address.full) {
+        showToast('لطفاً همه فیلدهای ضروری را کامل کنید'); return;
       }
-    } else {
-      const res = await fetch(BACKEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (data.paymentUrl) {
-        if (tg && tg.openLink) tg.openLink(data.paymentUrl);
-        else window.location.href = data.paymentUrl;
-      } else {
-        showToast('خطا در اتصال به درگاه پرداخت');
-      }
+      goToStep(2);
+    };
+  }
+  if (checkoutStep === 2) {
+    document.querySelectorAll('.ship-option').forEach(opt => {
+      opt.onclick = () => {
+        selectedShipping = SHIPPING_METHODS.find(m => m.id === opt.dataset.id);
+        renderDrawerStep();
+      };
+    });
+    document.getElementById('backToAddrBtn').onclick = () => goToStep(1);
+    const toPay = document.getElementById('toPaymentBtn');
+    if (toPay) toPay.onclick = () => { if (selectedShipping) goToStep(3); };
+  }
+  if (checkoutStep === 3) {
+    document.getElementById('copyCardBtn').onclick = () => {
+      const num = CARD_INFO.number.replace(/[^\d۰-۹]/g,'');
+      navigator.clipboard && navigator.clipboard.writeText(CARD_INFO.number);
+      showToast('شماره کارت کپی شد');
+    };
+    document.getElementById('backToShipBtn').onclick = () => goToStep(2);
+    document.getElementById('toConfirmBtn').onclick = () => {
+      last4 = document.getElementById('last4Input').value.trim();
+      if (!/^\d{4}$/.test(last4)) { showToast('۴ رقم آخر کارت را درست وارد کنید'); return; }
+      goToStep(4);
+    };
+  }
+  if (checkoutStep === 4) {
+    if (lastOrderId) {
+      const closeBtn = document.getElementById('closeAfterOrderBtn');
+      if (closeBtn) closeBtn.onclick = () => {
+        cart = {}; selectedShipping = null; last4 = ''; lastOrderId = null; receiptDataUrl = null;
+        closeDrawer(); renderProducts(); renderCartBar();
+      };
+      return;
     }
-  } catch (err) {
-    showToast('خطا در برقراری ارتباط با سرور');
-  } finally {
-    setPaying(false);
+    document.getElementById('backToPayBtn').onclick = () => goToStep(3);
+    const fileInput = document.getElementById('receiptInput');
+    fileInput.onchange = () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        receiptDataUrl = e.target.result;
+        const img = document.getElementById('receiptPreview');
+        img.src = receiptDataUrl; img.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    };
+    document.getElementById('finalSubmitBtn').onclick = submitOrder;
   }
 }
-document.getElementById('checkoutBtn').onclick = doCheckout;
 
+function submitOrder(){
+  const orderId = genOrderId();
+  lastOrderId = orderId;
+  const lines = cartLines().map(l => ({ name:l.p.name, size:l.size, qty:l.qty, price:l.p.price }));
+  const payload = {
+    orderId, address, shipping: selectedShipping, last4,
+    items: lines, subtotal: cartSummary().total, shippingCost: shippingCost(), total: grandTotal(),
+    telegramUser: (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null
+  };
+  loyaltyPoints += Math.round(rewardForOrder()/1000);
+  document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
+  if (tg) {
+    tg.HapticFeedback && tg.HapticFeedback.notificationOccurred('success');
+    tg.sendData(JSON.stringify(payload));
+  }
+  renderDrawerStep();
+}
+
+/* ---------------- Telegram MainButton ---------------- */
 function updateMainButton(count, total){
   if (!tg || !tg.MainButton) return;
   if (count > 0) {
-    tg.MainButton.setText('پرداخت · ' + formatPrice(total) + ' تومان');
-    tg.MainButton.color = '#d7dbe0';
-    tg.MainButton.textColor = '#1b1b1d';
+    tg.MainButton.setText('تکمیل خرید · ' + formatPrice(total) + ' تومان');
+    tg.MainButton.color = '#d7dbe0'; tg.MainButton.textColor = '#1b1b1d';
     tg.MainButton.show();
-  } else {
-    tg.MainButton.hide();
-  }
+  } else { tg.MainButton.hide(); }
 }
-if (tg && tg.MainButton) {
-  tg.MainButton.onClick(() => { openDrawer(); });
+if (tg && tg.MainButton) tg.MainButton.onClick(() => { checkoutStep = 0; openDrawer(); });
+
+/* ---------------- AI chat ---------------- */
+const chatPanel = document.getElementById('chatPanel');
+const chatMsgs = document.getElementById('chatMsgs');
+let chatOpened = false;
+document.getElementById('aiFab').onclick = () => {
+  chatPanel.classList.add('show');
+  if (!chatOpened) {
+    chatOpened = true;
+    addMsg('bot', 'سلام 🤍 من دستیار هوشمند گالری نقره محمودی هستم. درباره محصولات، ارسال، یا پرداخت سوالی دارید؟');
+    renderQuickQuestions();
+  }
+};
+document.getElementById('chatCloseBtn').onclick = () => chatPanel.classList.remove('show');
+
+function renderQuickQuestions(){
+  const qs = ['زمان ارسال چقدره؟','عیار نقره چنده؟','شرایط مرجوعی؟','چطور پرداخت کنم؟'];
+  document.getElementById('quickQ').innerHTML = qs.map(q => `<span data-q="${q}">${q}</span>`).join('');
+  document.querySelectorAll('#quickQ span').forEach(s => { s.onclick = () => sendChat(s.dataset.q); });
 }
 
+function addMsg(role, text){
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.textContent = text;
+  chatMsgs.appendChild(div);
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
+}
+
+function aiFallbackAnswer(q){
+  const lower = q.toLowerCase();
+  for (const item of AI_FAQ) {
+    if (item.keys.some(k => q.includes(k))) return item.answer;
+  }
+  return 'ممنون از سوالتون 🌸 همکاران ما به‌زودی پاسخ دقیق‌تری می‌دهند؛ در همین حین می‌توانید محصولات را در فروشگاه مرور کنید.';
+}
+
+async function sendChat(text){
+  if (!text) return;
+  addMsg('user', text);
+  document.getElementById('chatInput').value = '';
+  if (AI_DEMO_MODE) {
+    setTimeout(() => addMsg('bot', aiFallbackAnswer(text)), 500);
+  } else {
+    try {
+      const res = await fetch(AI_BACKEND_URL, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ message:text })
+      });
+      const data = await res.json();
+      addMsg('bot', data.reply || aiFallbackAnswer(text));
+    } catch(e) { addMsg('bot', aiFallbackAnswer(text)); }
+  }
+}
+document.getElementById('chatSendBtn').onclick = () => sendChat(document.getElementById('chatInput').value.trim());
+document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(e.target.value.trim()); });
+
+/* ---------------- Init ---------------- */
 renderChips();
 renderProducts();
 renderCartBar();
