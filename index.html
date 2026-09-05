@@ -315,6 +315,86 @@
   .quick-q span{
     font-size:11px; padding:6px 11px; border-radius:999px; border:1px solid #d7dbe030; color:var(--silver-dim); cursor:pointer;
   }
+
+  /* ---------- Admin panel ---------- */
+  .admin-fab{
+    position:fixed; right:16px; bottom:calc(96px + var(--safe-bottom));
+    width:50px; height:50px; border-radius:50%; z-index:45;
+    background:linear-gradient(135deg, #5a8f6b, #3d6b4a); color:#fff;
+    display:none; align-items:center; justify-content:center;
+    box-shadow:0 8px 20px #00000060; cursor:pointer; border:none; font-size:20px;
+  }
+  .admin-fab.show{display:flex;}
+  .admin-sheet{
+    position:fixed; inset:0; z-index:100; background:var(--graphite);
+    transform:translateY(100%); transition:transform .35s cubic-bezier(.2,.8,.2,1);
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  .admin-sheet.show{transform:translateY(0);}
+  .admin-head{
+    padding:14px 16px; border-bottom:1px solid #ffffff15;
+    display:flex; align-items:center; justify-content:space-between;
+    background:linear-gradient(180deg, #1b1b1d 80%, transparent);
+  }
+  .admin-head h2{margin:0; font-size:16px; color:var(--chrome);}
+  .admin-tabs{display:flex; gap:5px; padding:10px 12px; overflow-x:auto; border-bottom:1px solid #ffffff10; scrollbar-width:none;}
+  .admin-tabs::-webkit-scrollbar{display:none;}
+  .admin-tab{ font-size:12px; white-space:nowrap;
+    flex:0 0 auto; padding:8px 16px; border-radius:999px; border:1px solid #d7dbe030;
+    background:#ffffff08; color:var(--silver-dim); font-size:12.5px; font-weight:600; cursor:pointer;
+  }
+  .admin-tab.active{background:var(--silver); color:var(--graphite); border-color:var(--silver);}
+  .admin-body{flex:1; overflow-y:auto; padding:14px 16px 30px;}
+  .admin-card{
+    background:#ffffff08; border:1px solid #d7dbe022; border-radius:14px;
+    padding:12px; margin-bottom:10px; display:flex; gap:12px; align-items:flex-start;
+  }
+  .admin-card img, .admin-card .ph{
+    width:56px; height:56px; border-radius:10px; object-fit:cover; flex:0 0 auto;
+    background:#00000040; display:flex; align-items:center; justify-content:center;
+  }
+  .admin-card .info{flex:1; min-width:0;}
+  .admin-card .aname{font-size:13.5px; font-weight:700; color:var(--chrome);}
+  .admin-card .ameta{font-size:11px; color:var(--silver-dim); margin-top:3px;}
+  .admin-card .actions{display:flex; gap:6px; margin-top:8px;}
+  .admin-card .actions button{
+    padding:5px 10px; border-radius:8px; border:1px solid #d7dbe030;
+    background:#ffffff0a; color:var(--silver); font-size:11px; font-family:inherit; cursor:pointer;
+  }
+  .admin-card .actions button.del{border-color:#8a4b3a; color:#c97a6a;}
+  .admin-form label{font-size:11.5px; color:var(--silver-dim); display:block; margin:10px 0 5px;}
+  .admin-form input, .admin-form textarea, .admin-form select{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid #d7dbe030;
+    background:#ffffff0a; color:var(--ivory); font-family:inherit; font-size:13px;
+  }
+  .admin-form textarea{resize:vertical; min-height:60px;}
+  .admin-form .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .img-preview-box{
+    width:100%; height:120px; border-radius:12px; border:1.5px dashed #d7dbe040;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    position:relative; margin-top:8px; background:#00000030;
+  }
+  .img-preview-box img{max-width:100%; max-height:100%; object-fit:contain;}
+  .img-preview-box input{position:absolute; inset:0; opacity:0; cursor:pointer;}
+  .stock-badge{
+    display:inline-block; padding:2px 8px; border-radius:6px; font-size:10.5px; font-weight:700;
+  }
+  .stock-ok{background:#5a8f6b33; color:#7dba8f;}
+  .stock-low{background:#8a4b3a44; color:#d48a7a;}
+  .stock-out{background:#ffffff15; color:var(--silver-dim);}
+  .loyalty-admin-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 0; border-bottom:1px solid #ffffff10;
+  }
+  .stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;}
+  .stat-box{
+    background:#ffffff08; border-radius:12px; padding:14px; text-align:center;
+  }
+  .stat-box .sv{font-size:20px; font-weight:800; color:var(--gold);}
+  .stat-box .sl{font-size:11px; color:var(--silver-dim); margin-top:4px;}
+  .photo img.real-img{width:100%; height:100%; object-fit:cover; border-radius:14px;}
+  .detail-photo img.real-img{width:100%; height:100%; object-fit:contain; border-radius:12px;}
+
 </style>
 </head>
 <body>
@@ -389,6 +469,27 @@
   </div>
 </div>
 
+
+<!-- Admin FAB -->
+<button class="admin-fab" id="adminFab" title="پنل مدیریت">⚙</button>
+
+<!-- Admin full sheet -->
+<div class="admin-sheet" id="adminSheet">
+  <div class="admin-head">
+    <h2>پنل مدیریت گالری</h2>
+    <div class="icon-btn" id="adminCloseBtn">✕</div>
+  </div>
+  <div class="admin-tabs" id="adminTabs">
+    <div class="admin-tab active" data-tab="products">محصولات</div>
+    <div class="admin-tab" data-tab="inventory">موجودی</div>
+    <div class="admin-tab" data-tab="discounts">تخفیف</div>
+    <div class="admin-tab" data-tab="loyalty">امتیاز</div>
+    <div class="admin-tab" data-tab="orders">سفارش‌ها</div>
+    <div class="admin-tab" data-tab="settings">تنظیمات</div>
+  </div>
+  <div class="admin-body" id="adminBody"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -411,32 +512,45 @@ if (tg) {
       به‌صورت پیام عادی برای ربات بفرستد (با ذکر همان شماره پیگیری).
 ================================================================= */
 const BOT_LINK = 'https://t.me/mahmoudisilvershop_bot';
-const CARD_INFO = { number: '۶۰۳۷-۹۹۹۱-۲۳۴۵-۶۷۸۹', owner: 'علی محمودی', bank: 'بانک ملی (نمونه - جایگزین شود)' };
+// اطلاعات پرداخت (قابل ویرایش از پنل مدیریت → تنظیمات)
+let CARD_INFO = {
+  number: '6221-0612-6177-9385',
+  owner: 'علی محمودی',
+  bank: 'بانک پارسیان',
+  sheba: 'IR920540213247002098738601'
+};
 const AI_BACKEND_URL = 'https://YOUR-BACKEND-DOMAIN.example.com/api/ai-chat';
 const AI_DEMO_MODE = true;
+const ADMIN_ID = 1560574162;  // شناسه تلگرام ادمین
+const STORAGE_KEY = 'mahmoudi_products_v3';
+const LOYALTY_KEY = 'mahmoudi_loyalty_v1';
+const DISCOUNT_KEY = 'mahmoudi_discounts_v1';
+const ORDERS_KEY = 'mahmoudi_orders_v1';
+const PAYMENT_KEY = 'mahmoudi_payment_v1';
 
 /* ---------------- Data ---------------- */
 const RING_SIZES = ['۴۹','۵۱','۵۳','۵۵','۵۷'];
-const PRODUCTS = [
-  { id:1, cat:'انگشتر', name:'انگشتر نقره فیروزه', notes:'نقره ۹۲۵ عیار، نگین فیروزه نیشابوری', price:1250000, gem:'#2f8a86',
+const DEFAULT_PRODUCTS = [
+  { id:1, cat:'انگشتر', name:'انگشتر نقره فیروزه', notes:'نقره ۹۲۵ عیار، نگین فیروزه نیشابوری', price:1250000, gem:'#2f8a86', stock:12, image:null,
     sizes:RING_SIZES, features:{'جنس':'نقره ۹۲۵ عیار','وزن':'۳.۲ گرم','نگین':'فیروزه نیشابوری','پوشش':'آبکاری رودیوم'},
     reviews:[{user:'زهرا.م',stars:5,comment:'کیفیتش عالی بود، دقیقاً مثل عکس بود و بسته‌بندی شیکی داشت.'},{user:'الف.کریمی',stars:4,comment:'زیبا و شیک، فقط کاش سایزبندی دقیق‌تر بود.'},{user:'مهسا',stars:5,comment:'برای هدیه گرفتم، خیلی خوشش اومد.'}] },
-  { id:2, cat:'انگشتر', name:'انگشتر نقره سولیتر', notes:'نقره ۹۲۵ عیار، آبکاری رودیوم', price:980000, gem:'#c9ced4',
+  { id:2, cat:'انگشتر', name:'انگشتر نقره سولیتر', notes:'نقره ۹۲۵ عیار، آبکاری رودیوم', price:980000, gem:'#c9ced4', stock:8, image:null,
     sizes:RING_SIZES, features:{'جنس':'نقره ۹۲۵ عیار','وزن':'۲.۸ گرم','نگین':'زیرکونیا سفید','پوشش':'آبکاری رودیوم'},
     reviews:[{user:'نیلوفر',stars:5,comment:'برق میزنه، عالیه.'},{user:'سارا ر.',stars:4,comment:'قشنگه ولی کمی ظریف‌تر از انتظارم بود.'}] },
-  { id:3, cat:'دستبند', name:'دستبند زنجیری نقره', notes:'نقره خالص، طرح ظریف زنانه', price:1450000, gem:'#8a4b3a',
+  { id:3, cat:'دستبند', name:'دستبند زنجیری نقره', notes:'نقره خالص، طرح ظریف زنانه', price:1450000, gem:'#8a4b3a', stock:5, image:null,
     sizes:['تک‌سایز (قابل تنظیم)'], features:{'جنس':'نقره خالص ۹۲۵','وزن':'۵.۱ گرم','طول':'۱۶ تا ۱۹ سانتی‌متر','قفل':'لابستر امن'},
     reviews:[{user:'پریسا',stars:5,comment:'ظریف و قابل تنظیمه، خیلی راحت روی مچ میشینه.'},{user:'رها',stars:5,comment:'کیفیت ساختش حرف نداره.'}] },
-  { id:4, cat:'دستبند', name:'دستبند مردانه کارتیه', notes:'نقره ۹۲۵ عیار، طرح مردانه', price:1680000, gem:'#4a4f57',
+  { id:4, cat:'دستبند', name:'دستبند مردانه کارتیه', notes:'نقره ۹۲۵ عیار، طرح مردانه', price:1680000, gem:'#4a4f57', stock:3, image:null,
     sizes:['۱۸ سانتی‌متر','۲۰ سانتی‌متر','۲۲ سانتی‌متر'], features:{'جنس':'نقره ۹۲۵ عیار','وزن':'۱۲ گرم','طرح':'کارتیه کلاسیک','پوشش':'آبکاری تیتانیوم'},
     reviews:[{user:'امیر.ت',stars:4,comment:'سنگینه به معنی خوبش، خیلی محکم به‌نظر میاد.'},{user:'رضا کاظمی',stars:5,comment:'دقیقاً همونی بود که میخواستم.'}] },
-  { id:5, cat:'گردنبند', name:'گردنبند نگین عقیق', notes:'نقره اصل، نگین عقیق قرمز یمن', price:1890000, gem:'#7a2e2e',
+  { id:5, cat:'گردنبند', name:'گردنبند نگین عقیق', notes:'نقره اصل، نگین عقیق قرمز یمن', price:1890000, gem:'#7a2e2e', stock:7, image:null,
     sizes:['۴۰ سانتی‌متر','۴۵ سانتی‌متر','۵۰ سانتی‌متر'], features:{'جنس':'نقره اصل ۹۲۵','وزن':'۶.۴ گرم','نگین':'عقیق قرمز یمنی','گواهی اصالت':'دارد'},
     reviews:[{user:'مریم د.',stars:5,comment:'رنگ نگینش فوق‌العاده‌ست، عکس واقعی رو کم داره نشون میده.'},{user:'هستی',stars:4,comment:'زیبا بود، کمی دیر رسید ولی می‌ارزید.'}] },
-  { id:6, cat:'گوشواره', name:'گوشواره مروارید نقره', notes:'نقره ۹۲۵ عیار، مروارید غلتکی', price:990000, gem:'#e8e4da',
+  { id:6, cat:'گوشواره', name:'گوشواره مروارید نقره', notes:'نقره ۹۲۵ عیار، مروارید غلتکی', price:990000, gem:'#e8e4da', stock:15, image:null,
     sizes:null, features:{'جنس':'نقره ۹۲۵ عیار','وزن':'۲.۱ گرم (جفت)','نوع مروارید':'غلتکی طبیعی','قفل':'پیچی امن'},
     reviews:[{user:'الناز',stars:5,comment:'سبک و شیکه، برای استفاده روزمره عالیه.'},{user:'فاطمه.ک',stars:5,comment:'مروارید‌هاش خیلی خوش‌رنگه.'}] },
 ];
+let PRODUCTS = [];
 const CATS = ['همه', 'انگشتر', 'دستبند', 'گردنبند', 'گوشواره'];
 const SHIPPING_METHODS = [
   { id:'post', name:'پست پیشتاز', eta:'۳ تا ۵ روز کاری', cost:45000 },
@@ -458,6 +572,83 @@ let loyaltyPoints = 120; // demo starting points
 let currentDetailProduct = null;
 let selectedDetailSize = null;
 let detailQty = 1;
+let isAdmin = false;
+let adminTab = 'products';
+let editingProductId = null; // null = list mode, number = edit, 'new' = add
+let loyaltyCustomers = []; // {id, name, points, phone}
+
+/* ---------- Persistence ---------- */
+function loadProducts(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      PRODUCTS = JSON.parse(raw);
+      return;
+    }
+  } catch(e){}
+  PRODUCTS = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+  saveProducts();
+}
+function saveProducts(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(PRODUCTS)); } catch(e){ console.warn('storage full', e); }
+}
+function loadLoyalty(){
+  try {
+    const raw = localStorage.getItem(LOYALTY_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      loyaltyPoints = data.current || 120;
+      loyaltyCustomers = data.customers || [];
+      return;
+    }
+  } catch(e){}
+  loyaltyCustomers = [
+    { id:1, name:'زهرا محمدی', phone:'0912***1234', points:120 },
+    { id:2, name:'امیر رضایی', phone:'0935***5678', points:80 },
+    { id:3, name:'سارا کریمی', phone:'0910***9012', points:45 },
+  ];
+  saveLoyalty();
+}
+function saveLoyalty(){
+  try {
+    localStorage.setItem(LOYALTY_KEY, JSON.stringify({ current: loyaltyPoints, customers: loyaltyCustomers }));
+  } catch(e){}
+}
+function loadDiscounts(){
+  try {
+    const raw = localStorage.getItem(DISCOUNT_KEY);
+    if (raw) { discounts = JSON.parse(raw); return; }
+  } catch(e){}
+  discounts = [
+    { code:'SILVER10', percent:10, active:true, note:'۱۰٪ تخفیف ویژه' },
+    { code:'WELCOME50', amount:50000, active:true, note:'۵۰ هزار تومان تخفیف اولین خرید' }
+  ];
+  saveDiscounts();
+}
+function saveDiscounts(){
+  try { localStorage.setItem(DISCOUNT_KEY, JSON.stringify(discounts)); } catch(e){}
+}
+function loadOrders(){
+  try {
+    const raw = localStorage.getItem(ORDERS_KEY);
+    if (raw) recentOrders = JSON.parse(raw);
+  } catch(e){}
+}
+function loadPaymentInfo(){
+  try {
+    const raw = localStorage.getItem(PAYMENT_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      CARD_INFO = { ...CARD_INFO, ...data };
+    }
+  } catch(e){}
+}
+function savePaymentInfo(){
+  try { localStorage.setItem(PAYMENT_KEY, JSON.stringify(CARD_INFO)); } catch(e){}
+}
+function nextProductId(){
+  return PRODUCTS.reduce((m,p) => Math.max(m, p.id||0), 0) + 1;
+}
 
 let checkoutStep = 0; // 0 cart, 1 address, 2 shipping, 3 payment, 4 confirm
 let address = { name:'', phone:'', city:'', full:'', postal:'' };
@@ -465,6 +656,9 @@ let selectedShipping = null;
 let last4 = '';
 let receiptDataUrl = null;
 let lastOrderId = null;
+let discounts = []; // {code, percent?, amount?, active, note}
+let appliedDiscount = null;
+let recentOrders = []; // stored locally for admin view
 
 /* ---------------- Helpers ---------------- */
 const faDigits = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
@@ -541,17 +735,24 @@ function renderProducts(){
   }
   list.forEach(p => {
     const avg = avgRating(p);
+    const stock = p.stock != null ? p.stock : 0;
+    const stockClass = stock <= 0 ? 'stock-out' : stock <= 3 ? 'stock-low' : 'stock-ok';
+    const stockText = stock <= 0 ? 'ناموجود' : stock <= 3 ? 'موجودی کم' : '';
+    const photoHtml = p.image
+      ? `<img class="real-img" src="${p.image}" alt="">`
+      : `<div class="ring"></div><div class="gem" style="background:${p.gem||'#c9ced4'}"></div>`;
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `
-      <div class="photo" style="background:linear-gradient(135deg, ${p.gem}55, #00000040)">
-        <div class="ring"></div>
-        <div class="gem" style="background:${p.gem}"></div>
+      <div class="photo" style="background:linear-gradient(135deg, ${(p.gem||'#c9ced4')}55, #00000040)">
+        ${photoHtml}
       </div>
       <div class="info">
         <div class="name">${p.name}</div>
-        <div class="rating-row"><span class="stars">${starString(avg)}</span><span class="rating-count">(${faDigits(p.reviews.length)} نظر)</span></div>
-        <div class="notes">${p.notes}</div>
+        <div class="rating-row"><span class="stars">${starString(avg)}</span><span class="rating-count">(${faDigits((p.reviews||[]).length)} نظر)</span>
+          ${stockText ? `<span class="stock-badge ${stockClass}" style="margin-right:6px">${stockText}</span>` : ''}
+        </div>
+        <div class="notes">${p.notes||''}</div>
         <div class="row-bottom">
           <div class="price">${formatPrice(p.price)}</div>
           <div class="qty-holder" id="qty-${p.id}"></div>
@@ -608,8 +809,8 @@ function renderDetail(){
     `<div class="review-item"><div class="ru">${r.user}</div><div class="rs">${starString(r.stars)}</div><div class="rc">${r.comment}</div></div>`).join('');
 
   el.innerHTML = `
-    <div class="detail-photo" style="background:linear-gradient(135deg, ${p.gem}55, #00000040)">
-      <div class="ring"></div><div class="gem" style="background:${p.gem}"></div>
+    <div class="detail-photo" style="background:linear-gradient(135deg, ${(p.gem||'#c9ced4')}55, #00000040)">
+      ${p.image ? `<img class="real-img" src="${p.image}" alt="">` : `<div class="ring"></div><div class="gem" style="background:${p.gem||'#c9ced4'}"></div>`}
     </div>
     <div class="detail-body">
       <div class="detail-name">${p.name}</div>
@@ -665,8 +866,32 @@ function cartSummary(){
   return { count, total };
 }
 function shippingCost(){ return selectedShipping ? selectedShipping.cost : 0; }
-function grandTotal(){ return cartSummary().total + shippingCost(); }
+function discountAmount(){
+  if (!appliedDiscount) return 0;
+  const sub = cartSummary().total;
+  if (appliedDiscount.percent) return Math.round(sub * (appliedDiscount.percent / 100));
+  if (appliedDiscount.amount) return Math.min(appliedDiscount.amount, sub);
+  return 0;
+}
+function grandTotal(){ return Math.max(0, cartSummary().total + shippingCost() - discountAmount()); }
 function rewardForOrder(){ return Math.round(cartSummary().total * 0.02 / 1000) * 1000; }
+
+function compressImage(dataUrl, quality, maxW){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
+}
 
 function renderCartBar(){
   const { count, total } = cartSummary();
@@ -757,18 +982,34 @@ function stepShippingHtml(){
 }
 
 function stepPaymentHtml(){
+  const discountLine = appliedDiscount
+    ? `<div class="drawer-item"><div class="di-name">تخفیف (${appliedDiscount.code})</div><div class="di-price" style="color:var(--good)">− ${formatPrice(discountAmount())} تومان</div></div>`
+    : '';
   return `<h3>پرداخت کارت‌به‌کارت</h3>
-    <div class="amount-highlight">${formatPrice(grandTotal())} تومان<span>مبلغ کل قابل پرداخت (کالا + ارسال)</span></div>
+    <div class="amount-highlight">${formatPrice(grandTotal())} تومان<span>مبلغ کل قابل پرداخت (کالا + ارسال${appliedDiscount ? ' − تخفیف' : ''})</span></div>
     <div class="card-info-box">
-      <div class="ci-row"><span class="ci-label">بانک</span><span class="ci-value">${CARD_INFO.bank}</span></div>
-      <div class="ci-row"><span class="ci-label">شماره کارت</span><span class="ci-value" id="cardNumberVal">${CARD_INFO.number}</span></div>
+      <div class="ci-row"><span class="ci-label">بانک</span><span class="ci-value">${CARD_INFO.bank || '—'}</span></div>
+      <div class="ci-row"><span class="ci-label">شماره کارت</span><span class="ci-value" id="cardNumberVal" style="direction:ltr">${CARD_INFO.number}</span></div>
+      <div class="ci-row"><span class="ci-label">شبا</span><span class="ci-value" style="direction:ltr;font-size:11.5px">${CARD_INFO.sheba || '—'}</span></div>
       <div class="ci-row"><span class="ci-label">به نام</span><span class="ci-value">${CARD_INFO.owner}</span></div>
-      <button class="copy-btn" id="copyCardBtn">کپی شماره کارت</button>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="copy-btn" id="copyCardBtn">کپی کارت</button>
+        <button class="copy-btn" id="copyShebaBtn">کپی شبا</button>
+      </div>
+    </div>
+    <div class="form-block">
+      <label>کد تخفیف (اختیاری)</label>
+      <div style="display:flex;gap:8px">
+        <input id="discountCodeInput" value="${appliedDiscount ? appliedDiscount.code : ''}" placeholder="مثلاً SILVER10" style="flex:1">
+        <button class="copy-btn" id="applyDiscountBtn" style="white-space:nowrap">اعمال</button>
+      </div>
+      ${appliedDiscount ? `<div style="font-size:11.5px;color:var(--good);margin-top:4px">✓ تخفیف ${appliedDiscount.percent || appliedDiscount.amount ? (appliedDiscount.percent ? appliedDiscount.percent + '٪' : formatPrice(appliedDiscount.amount) + ' تومان') : ''} اعمال شد</div>` : ''}
     </div>
     <div class="form-block">
       <label>۴ رقم آخر کارتی که واریز کردید</label>
       <input id="last4Input" inputmode="numeric" maxlength="4" value="${last4}" placeholder="مثلاً ۱۲۳۴">
     </div>
+    ${discountLine}
     <div class="nav-row">
       <button class="btn btn-secondary" id="backToShipBtn">بازگشت</button>
       <button class="btn btn-primary" id="toConfirmBtn">ادامه</button>
@@ -782,26 +1023,29 @@ function stepConfirmHtml(){
         <div style="font-size:12.5px;color:var(--silver-dim)">شماره پیگیری سفارش شما</div>
         <div class="oid">${lastOrderId}</div>
         <div style="font-size:11.5px;color:var(--silver-dim); line-height:2;">
-          لطفاً تصویر رسید واریزی را همراه با همین شماره پیگیری، به‌صورت پیام برای ربات ارسال کنید تا سفارش شما تایید شود.<br>
-          🎁 با این خرید <b style="color:var(--gold)">${faDigits(rewardForOrder()/1000)}</b> امتیاز به حساب وفاداری شما اضافه می‌شود.
+          سفارش شما ثبت شد. تصویر رسید به همراه شماره پیگیری برای ربات ارسال می‌شود.<br>
+          اگر عکس رسید را ندیدید، لطفاً همان عکس را با ذکر <b>${lastOrderId}</b> به‌صورت پیام عادی برای ربات بفرستید تا تایید نهایی شود.<br>
+          🎁 با این خرید <b style="color:var(--gold)">${faDigits(Math.round(rewardForOrder()/1000))}</b> امتیاز به حساب وفاداری شما اضافه می‌شود.
         </div>
       </div>
       <div class="nav-row"><button class="btn btn-primary" id="closeAfterOrderBtn">بازگشت به فروشگاه</button></div>`;
   }
   const { count, total } = cartSummary();
+  const disc = discountAmount();
   return `<h3>بررسی نهایی سفارش</h3>
     <div class="drawer-item"><div class="di-name">تعداد اقلام</div><div class="di-price">${faDigits(count)}</div></div>
     <div class="drawer-item"><div class="di-name">جمع کالاها</div><div class="di-price">${formatPrice(total)} تومان</div></div>
     <div class="drawer-item"><div class="di-name">هزینه ارسال (${selectedShipping?selectedShipping.name:''})</div><div class="di-price">${formatPrice(shippingCost())} تومان</div></div>
+    ${disc > 0 ? `<div class="drawer-item"><div class="di-name">تخفیف</div><div class="di-price" style="color:var(--good)">− ${formatPrice(disc)} تومان</div></div>` : ''}
     <div class="drawer-total"><span>مبلغ نهایی</span><span>${formatPrice(grandTotal())} تومان</span></div>
-    <div class="receipt-upload">
-      📎 در صورت تمایل، تصویر رسید را همین‌جا برای پیش‌نمایش خودتان انتخاب کنید (اختیاری)
-      <input type="file" accept="image/*" id="receiptInput">
-      <img id="receiptPreview" class="receipt-preview" style="display:none">
+    <div class="receipt-upload" style="border-color:${receiptDataUrl ? 'var(--good)' : '#d7dbe040'}">
+      ${receiptDataUrl ? '✓ رسید انتخاب شد — برای تغییر دوباره لمس کنید' : '📎 بارگذاری تصویر رسید واریزی <b style="color:var(--gold)">(اجباری)</b>'}
+      <input type="file" accept="image/*" id="receiptInput" capture="environment">
+      <img id="receiptPreview" class="receipt-preview" style="display:${receiptDataUrl ? 'block' : 'none'}" ${receiptDataUrl ? `src="${receiptDataUrl}"` : ''}>
     </div>
     <div class="nav-row">
       <button class="btn btn-secondary" id="backToPayBtn">بازگشت</button>
-      <button class="btn btn-primary" id="finalSubmitBtn">ثبت نهایی سفارش</button>
+      <button class="btn btn-primary" id="finalSubmitBtn" ${receiptDataUrl ? '' : 'disabled'}>ثبت نهایی سفارش</button>
     </div>`;
 }
 
@@ -846,9 +1090,24 @@ function bindStepEvents(){
   }
   if (checkoutStep === 3) {
     document.getElementById('copyCardBtn').onclick = () => {
-      const num = CARD_INFO.number.replace(/[^\d۰-۹]/g,'');
-      navigator.clipboard && navigator.clipboard.writeText(CARD_INFO.number);
+      const raw = (CARD_INFO.number || '').replace(/[^\d۰-۹0-9]/g,'');
+      navigator.clipboard && navigator.clipboard.writeText(raw || CARD_INFO.number);
       showToast('شماره کارت کپی شد');
+    };
+    const shebaBtn = document.getElementById('copyShebaBtn');
+    if (shebaBtn) shebaBtn.onclick = () => {
+      navigator.clipboard && navigator.clipboard.writeText(CARD_INFO.sheba || '');
+      showToast('شماره شبا کپی شد');
+    };
+    const applyBtn = document.getElementById('applyDiscountBtn');
+    if (applyBtn) applyBtn.onclick = () => {
+      const code = (document.getElementById('discountCodeInput').value || '').trim().toUpperCase();
+      if (!code) { appliedDiscount = null; renderDrawerStep(); return; }
+      const found = discounts.find(d => d.code.toUpperCase() === code && d.active !== false);
+      if (!found) { showToast('کد تخفیف نامعتبر است'); return; }
+      appliedDiscount = found;
+      showToast('تخفیف اعمال شد');
+      renderDrawerStep();
     };
     document.getElementById('backToShipBtn').onclick = () => goToStep(2);
     document.getElementById('toConfirmBtn').onclick = () => {
@@ -861,7 +1120,7 @@ function bindStepEvents(){
     if (lastOrderId) {
       const closeBtn = document.getElementById('closeAfterOrderBtn');
       if (closeBtn) closeBtn.onclick = () => {
-        cart = {}; selectedShipping = null; last4 = ''; lastOrderId = null; receiptDataUrl = null;
+        cart = {}; selectedShipping = null; last4 = ''; lastOrderId = null; receiptDataUrl = null; appliedDiscount = null;
         closeDrawer(); renderProducts(); renderCartBar();
       };
       return;
@@ -871,11 +1130,17 @@ function bindStepEvents(){
     fileInput.onchange = () => {
       const file = fileInput.files[0];
       if (!file) return;
+      if (file.size > 8 * 1024 * 1024) { showToast('حجم عکس نباید بیشتر از ۸ مگابایت باشد'); return; }
       const reader = new FileReader();
       reader.onload = e => {
-        receiptDataUrl = e.target.result;
-        const img = document.getElementById('receiptPreview');
-        img.src = receiptDataUrl; img.style.display = 'block';
+        // فشرده‌سازی سبک برای کاهش حجم
+        compressImage(e.target.result, 0.7, 1200).then(compressed => {
+          receiptDataUrl = compressed;
+          renderDrawerStep();
+        }).catch(() => {
+          receiptDataUrl = e.target.result;
+          renderDrawerStep();
+        });
       };
       reader.readAsDataURL(file);
     };
@@ -884,19 +1149,64 @@ function bindStepEvents(){
 }
 
 function submitOrder(){
+  if (!receiptDataUrl) {
+    showToast('بارگذاری تصویر رسید الزامی است');
+    return;
+  }
   const orderId = genOrderId();
   lastOrderId = orderId;
-  const lines = cartLines().map(l => ({ name:l.p.name, size:l.size, qty:l.qty, price:l.p.price }));
+  const lines = cartLines().map(l => ({ id:l.p.id, name:l.p.name, size:l.size, qty:l.qty, price:l.p.price }));
+  // کاهش موجودی
+  lines.forEach(line => {
+    const p = PRODUCTS.find(x => x.id === line.id);
+    if (p && p.stock != null) {
+      p.stock = Math.max(0, p.stock - line.qty);
+    }
+  });
+  saveProducts();
+  renderProducts();
+
   const payload = {
-    orderId, address, shipping: selectedShipping, last4,
-    items: lines, subtotal: cartSummary().total, shippingCost: shippingCost(), total: grandTotal(),
-    telegramUser: (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null
+    type: 'new_order',
+    orderId,
+    address,
+    shipping: selectedShipping,
+    last4,
+    discount: appliedDiscount ? { code: appliedDiscount.code, amount: discountAmount() } : null,
+    items: lines,
+    subtotal: cartSummary().total,
+    shippingCost: shippingCost(),
+    discountAmount: discountAmount(),
+    total: grandTotal(),
+    hasReceipt: true,
+    telegramUser: (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null,
+    createdAt: new Date().toISOString()
   };
-  loyaltyPoints += Math.round(rewardForOrder()/1000);
+
+  // ذخیره سفارش برای مشاهده در پنل ادمین (بدون عکس کامل برای جلوگیری از پر شدن storage)
+  recentOrders.unshift({
+    ...payload,
+    receiptThumb: receiptDataUrl ? receiptDataUrl.substring(0, 80) + '…' : null
+  });
+  if (recentOrders.length > 50) recentOrders = recentOrders.slice(0, 50);
+  try { localStorage.setItem(ORDERS_KEY, JSON.stringify(recentOrders)); } catch(e){}
+
+  // امتیاز وفاداری
+  const pts = Math.round(rewardForOrder() / 1000);
+  loyaltyPoints += pts;
   document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
+  saveLoyalty();
+
+  // ارسال به ربات — عکس رسید به‌خاطر محدودیت حجم sendData ارسال نمی‌شود
+  // کاربر باید عکس را جداگانه با شماره پیگیری به ربات بفرستد (ربات آن را به ادمین فوروارد می‌کند)
   if (tg) {
     tg.HapticFeedback && tg.HapticFeedback.notificationOccurred('success');
-    tg.sendData(JSON.stringify(payload));
+    try {
+      // فقط متادیتای سفارش (بدون base64 عکس) ارسال می‌شود
+      tg.sendData(JSON.stringify(payload));
+    } catch(e) {
+      console.warn('sendData failed', e);
+    }
   }
   renderDrawerStep();
 }
@@ -968,7 +1278,487 @@ async function sendChat(text){
 document.getElementById('chatSendBtn').onclick = () => sendChat(document.getElementById('chatInput').value.trim());
 document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(e.target.value.trim()); });
 
+
+/* ================= Admin Panel ================= */
+function checkAdmin(){
+  try {
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      isAdmin = (tg.initDataUnsafe.user.id === ADMIN_ID);
+    }
+  } catch(e){ isAdmin = false; }
+  // fallback for testing outside Telegram (uncomment next line if needed)
+  // if (!tg) isAdmin = true;
+  const fab = document.getElementById('adminFab');
+  if (fab) fab.classList.toggle('show', isAdmin);
+}
+
+document.getElementById('adminFab').onclick = () => {
+  editingProductId = null;
+  adminTab = 'products';
+  openAdmin();
+};
+document.getElementById('adminCloseBtn').onclick = () => {
+  document.getElementById('adminSheet').classList.remove('show');
+};
+
+function openAdmin(){
+  document.getElementById('adminSheet').classList.add('show');
+  document.querySelectorAll('.admin-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === adminTab);
+  });
+  renderAdminBody();
+}
+
+document.getElementById('adminTabs').onclick = (e) => {
+  const tab = e.target.closest('.admin-tab');
+  if (!tab) return;
+  adminTab = tab.dataset.tab;
+  editingProductId = null;
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === adminTab));
+  renderAdminBody();
+};
+
+function renderAdminBody(){
+  const body = document.getElementById('adminBody');
+  if (adminTab === 'products') {
+    if (editingProductId === null) body.innerHTML = adminProductsListHtml();
+    else body.innerHTML = adminProductFormHtml(editingProductId);
+  } else if (adminTab === 'inventory') {
+    body.innerHTML = adminInventoryHtml();
+  } else if (adminTab === 'discounts') {
+    body.innerHTML = adminDiscountsHtml();
+  } else if (adminTab === 'loyalty') {
+    body.innerHTML = adminLoyaltyHtml();
+  } else if (adminTab === 'orders') {
+    body.innerHTML = adminOrdersHtml();
+  } else if (adminTab === 'settings') {
+    body.innerHTML = adminSettingsHtml();
+  }
+  bindAdminEvents();
+}
+
+function adminDiscountsHtml(){
+  const rows = discounts.map((d, i) => `
+    <div class="admin-card" style="flex-direction:column;align-items:stretch;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="aname" style="direction:ltr;text-align:right">${d.code}</div>
+          <div class="ameta">${d.percent ? d.percent + '٪' : formatPrice(d.amount||0) + ' تومان'} · ${d.note || ''}</div>
+        </div>
+        <span class="stock-badge ${d.active !== false ? 'stock-ok' : 'stock-out'}">${d.active !== false ? 'فعال' : 'غیرفعال'}</span>
+      </div>
+      <div class="actions">
+        <button data-toggle-discount="${i}">${d.active !== false ? 'غیرفعال کردن' : 'فعال کردن'}</button>
+        <button class="del" data-del-discount="${i}">حذف</button>
+      </div>
+    </div>`).join('');
+  return `
+    <div style="margin-bottom:12px;font-size:12.5px;color:var(--silver-dim)">کدهای تخفیف مشتریان</div>
+    ${rows || '<div class="empty-cart">کد تخفیفی تعریف نشده</div>'}
+    <div class="form-block" style="margin-top:16px;background:#ffffff08;padding:12px;border-radius:12px">
+      <label>کد جدید</label><input id="newDiscCode" placeholder="مثلاً SUMMER15" style="text-transform:uppercase">
+      <label>نوع تخفیف</label>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <select id="newDiscType" style="flex:1;padding:10px;border-radius:10px;border:1px solid #d7dbe030;background:#ffffff0a;color:var(--ivory);font-family:inherit">
+          <option value="percent">درصدی</option>
+          <option value="amount">مبلغ ثابت (تومان)</option>
+        </select>
+        <input id="newDiscValue" type="number" inputmode="numeric" placeholder="مقدار" style="flex:1">
+      </div>
+      <label>توضیح (اختیاری)</label><input id="newDiscNote" placeholder="توضیح کوتاه">
+      <button class="btn btn-primary" id="addDiscountBtn" style="width:100%;margin-top:8px">افزودن کد تخفیف</button>
+    </div>`;
+}
+
+function adminOrdersHtml(){
+  if (!recentOrders.length) {
+    return `<div class="empty-cart">هنوز سفارشی در این دستگاه ثبت نشده است.<br><span style="font-size:11px">سفارش‌ها پس از ثبت نهایی اینجا نمایش داده می‌شوند (ذخیره محلی).</span></div>`;
+  }
+  return recentOrders.map(o => `
+    <div class="admin-card" style="flex-direction:column;align-items:stretch;gap:6px">
+      <div style="display:flex;justify-content:space-between">
+        <div class="aname" style="direction:ltr">${o.orderId}</div>
+        <span style="font-size:11px;color:var(--gold)">${formatPrice(o.total)} تومان</span>
+      </div>
+      <div class="ameta">${o.address?.name || '—'} · ${o.address?.phone || ''}</div>
+      <div class="ameta">${(o.items||[]).map(i => i.name + (i.size?' '+i.size:'') + ' ×'+i.qty).join(' | ')}</div>
+      <div class="ameta">۴ رقم آخر: ${o.last4 || '—'} · ارسال: ${o.shipping?.name || '—'}</div>
+      ${o.discount ? `<div class="ameta" style="color:var(--good)">تخفیف: ${o.discount.code} (−${formatPrice(o.discount.amount||0)})</div>` : ''}
+      <div class="ameta" style="font-size:10px;color:var(--silver-dim)">${o.createdAt ? new Date(o.createdAt).toLocaleString('fa-IR') : ''}</div>
+    </div>`).join('');
+}
+
+function adminSettingsHtml(){
+  return `
+    <div style="margin-bottom:12px;font-size:12.5px;color:var(--silver-dim)">اطلاعات پرداخت (نمایش به مشتری در مرحله کارت‌به‌کارت)</div>
+    <div class="form-block">
+      <label>نام صاحب حساب</label><input id="setOwner" value="${CARD_INFO.owner || ''}">
+      <label>نام بانک</label><input id="setBank" value="${CARD_INFO.bank || ''}">
+      <label>شماره کارت</label><input id="setCard" value="${CARD_INFO.number || ''}" style="direction:ltr;text-align:left" placeholder="6221-0612-6177-9385">
+      <label>شماره شبا</label><input id="setSheba" value="${CARD_INFO.sheba || ''}" style="direction:ltr;text-align:left" placeholder="IR...">
+      <button class="btn btn-primary" id="savePaymentBtn" style="width:100%;margin-top:8px">ذخیره اطلاعات پرداخت</button>
+    </div>
+    <div style="margin-top:20px;padding:12px;background:#ffffff08;border-radius:12px;font-size:11.5px;color:var(--silver-dim);line-height:1.8">
+      <b style="color:var(--chrome)">نکته مهم درباره رسید:</b><br>
+      به دلیل محدودیت حجم پیام تلگرام (sendData)، عکس رسید مستقیماً از مینی‌اپ به ربات ارسال نمی‌شود.
+      سفارش (با شماره پیگیری) به ربات فرستاده می‌شود و کاربر باید عکس رسید را جداگانه با ذکر همان شماره به ربات بفرستد.
+      ربات شما باید آن پیام را به شما (ادمین) فوروارد کند.
+    </div>`;
+}
+
+function adminProductsListHtml(){
+  const items = PRODUCTS.map(p => {
+    const stock = p.stock != null ? p.stock : 0;
+    const sc = stock<=0?'stock-out':stock<=3?'stock-low':'stock-ok';
+    const thumb = p.image
+      ? `<img src="${p.image}" alt="">`
+      : `<div class="ph" style="background:linear-gradient(135deg,${p.gem||'#999'}55,#0003)"><div style="width:18px;height:18px;border-radius:50%;border:3px solid var(--silver)"></div></div>`;
+    return `<div class="admin-card">
+      ${thumb}
+      <div class="info">
+        <div class="aname">${p.name}</div>
+        <div class="ameta">${p.cat} · ${formatPrice(p.price)} تومان · موجودی: <span class="stock-badge ${sc}">${faDigits(stock)}</span></div>
+        <div class="actions">
+          <button data-edit="${p.id}">ویرایش</button>
+          <button class="del" data-del="${p.id}">حذف</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<button class="btn btn-primary" id="addProductBtn" style="width:100%;margin-bottom:14px">＋ افزودن محصول جدید</button>
+    ${items || '<div class="empty-cart">هنوز محصولی ثبت نشده</div>'}`;
+}
+
+function adminProductFormHtml(id){
+  const isNew = id === 'new';
+  const p = isNew ? {
+    id: nextProductId(), cat:'انگشتر', name:'', notes:'', price:0, gem:'#c9ced4',
+    stock:10, image:null, sizes:RING_SIZES.slice(), features:{'جنس':'نقره ۹۲۵ عیار','وزن':'','نگین':'','پوشش':'آبکاری رودیوم'}, reviews:[]
+  } : PRODUCTS.find(x => x.id === id);
+  if (!p) return '<div class="empty-cart">محصول یافت نشد</div>';
+
+  const featEntries = Object.entries(p.features || {});
+  const featHtml = featEntries.map(([k,v],i) => `
+    <div class="row2" style="margin-bottom:6px">
+      <input data-fk="${i}" value="${k}" placeholder="عنوان مشخصه">
+      <input data-fv="${i}" value="${v}" placeholder="مقدار">
+    </div>`).join('');
+
+  return `<div class="admin-form">
+    <button class="btn btn-secondary" id="backToListBtn" style="margin-bottom:12px">← بازگشت به لیست</button>
+    <h3 style="margin:0 0 8px;font-size:15px;color:var(--chrome)">${isNew ? 'محصول جدید' : 'ویرایش محصول'}</h3>
+
+    <label>عکس محصول</label>
+    <div class="img-preview-box" id="imgBox">
+      ${p.image ? `<img src="${p.image}" id="imgPrev">` : '<span style="color:var(--silver-dim);font-size:12px">برای آپلود کلیک کنید</span>'}
+      <input type="file" accept="image/*" id="imgInput">
+    </div>
+    ${p.image ? '<button class="btn btn-secondary" id="removeImgBtn" style="margin-top:6px;width:100%">حذف عکس</button>' : ''}
+
+    <label>نام محصول</label>
+    <input id="fName" value="${p.name||''}" placeholder="مثلاً انگشتر نقره فیروزه">
+
+    <div class="row2">
+      <div><label>دسته‌بندی</label>
+        <select id="fCat">
+          ${['انگشتر','دستبند','گردنبند','گوشواره'].map(c => `<option value="${c}" ${p.cat===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div><label>قیمت (تومان)</label>
+        <input id="fPrice" type="number" inputmode="numeric" value="${p.price||0}">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div><label>موجودی</label>
+        <input id="fStock" type="number" inputmode="numeric" value="${p.stock!=null?p.stock:0}">
+      </div>
+      <div><label>رنگ نگین (اگر عکس نباشد)</label>
+        <input id="fGem" value="${p.gem||'#c9ced4'}" placeholder="#2f8a86">
+      </div>
+    </div>
+
+    <label>توضیحات کوتاه</label>
+    <textarea id="fNotes" rows="2">${p.notes||''}</textarea>
+
+    <label>سایزها (با ویرگول جدا کنید، خالی = بدون سایز)</label>
+    <input id="fSizes" value="${(p.sizes||[]).join('، ')}" placeholder="۴۹، ۵۱، ۵۳ یا تک‌سایز">
+
+    <label>مشخصات فنی</label>
+    <div id="featList">${featHtml}</div>
+    <button class="btn btn-secondary" id="addFeatBtn" style="margin-top:6px;width:100%">＋ افزودن مشخصه</button>
+
+    <div class="nav-row" style="margin-top:18px">
+      <button class="btn btn-primary" id="saveProductBtn" style="flex:1">${isNew?'ثبت محصول':'ذخیره تغییرات'}</button>
+    </div>
+  </div>`;
+}
+
+function adminInventoryHtml(){
+  const totalItems = PRODUCTS.reduce((s,p) => s + (p.stock||0), 0);
+  const lowStock = PRODUCTS.filter(p => (p.stock||0) > 0 && (p.stock||0) <= 3);
+  const outOfStock = PRODUCTS.filter(p => (p.stock||0) <= 0);
+  const rows = PRODUCTS.map(p => {
+    const stock = p.stock != null ? p.stock : 0;
+    const sc = stock<=0?'stock-out':stock<=3?'stock-low':'stock-ok';
+    return `<div class="admin-card">
+      <div class="info" style="width:100%">
+        <div class="aname">${p.name}</div>
+        <div class="ameta">${p.cat}</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+          <span class="stock-badge ${sc}">موجودی: ${faDigits(stock)}</span>
+          <button data-stock-dec="${p.id}" style="width:28px;height:28px;border-radius:50%;border:none;background:var(--silver);color:var(--graphite);font-weight:800">−</button>
+          <button data-stock-inc="${p.id}" style="width:28px;height:28px;border-radius:50%;border:none;background:var(--silver);color:var(--graphite);font-weight:800">+</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  return `
+    <div class="stat-grid">
+      <div class="stat-box"><div class="sv">${faDigits(totalItems)}</div><div class="sl">کل موجودی</div></div>
+      <div class="stat-box"><div class="sv">${faDigits(PRODUCTS.length)}</div><div class="sl">تعداد محصول</div></div>
+      <div class="stat-box"><div class="sv" style="color:#d48a7a">${faDigits(lowStock.length)}</div><div class="sl">موجودی کم</div></div>
+      <div class="stat-box"><div class="sv" style="color:var(--silver-dim)">${faDigits(outOfStock.length)}</div><div class="sl">ناموجود</div></div>
+    </div>
+    ${rows}`;
+}
+
+function adminLoyaltyHtml(){
+  const items = loyaltyCustomers.map(c => `
+    <div class="loyalty-admin-item">
+      <div>
+        <div style="font-weight:700;font-size:13.5px">${c.name}</div>
+        <div style="font-size:11px;color:var(--silver-dim)">${c.phone||''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input data-lp="${c.id}" type="number" value="${c.points}" style="width:70px;padding:6px 8px;border-radius:8px;border:1px solid #d7dbe030;background:#ffffff0a;color:var(--ivory);font-family:inherit;text-align:center">
+        <span style="font-size:11px;color:var(--gold)">امتیاز</span>
+      </div>
+    </div>`).join('');
+  return `
+    <div class="stat-box" style="margin-bottom:16px">
+      <div class="sv">${faDigits(loyaltyPoints)}</div>
+      <div class="sl">امتیاز نمایشی کاربر فعلی (دمو)</div>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:center">
+        <input id="curPointsInput" type="number" value="${loyaltyPoints}" style="width:90px;padding:8px;border-radius:8px;border:1px solid #d7dbe030;background:#ffffff0a;color:var(--ivory);font-family:inherit;text-align:center">
+        <button class="btn btn-primary" id="saveCurPointsBtn" style="padding:8px 14px;flex:0">ذخیره</button>
+      </div>
+    </div>
+    <h3 style="font-size:14px;margin:0 0 10px;color:var(--chrome)">مشتریان نمونه</h3>
+    ${items}
+    <button class="btn btn-primary" id="saveAllLoyaltyBtn" style="width:100%;margin-top:16px">ذخیره تمام امتیازها</button>
+    <p style="font-size:11px;color:var(--silver-dim);margin-top:12px;line-height:1.7">
+      توجه: این بخش فعلاً دمو است. برای اتصال واقعی به کاربران تلگرام نیاز به بک‌اند دارید.
+    </p>`;
+}
+
+function bindAdminEvents(){
+  // Products list
+  const addBtn = document.getElementById('addProductBtn');
+  if (addBtn) addBtn.onclick = () => { editingProductId = 'new'; renderAdminBody(); };
+
+  document.querySelectorAll('[data-edit]').forEach(btn => {
+    btn.onclick = () => { editingProductId = parseInt(btn.dataset.edit); renderAdminBody(); };
+  });
+  document.querySelectorAll('[data-del]').forEach(btn => {
+    btn.onclick = () => {
+      const id = parseInt(btn.dataset.del);
+      if (!confirm('آیا از حذف این محصول مطمئن هستید؟')) return;
+      PRODUCTS = PRODUCTS.filter(p => p.id !== id);
+      saveProducts();
+      renderProducts();
+      renderAdminBody();
+      showToast('محصول حذف شد');
+    };
+  });
+
+  // Form
+  const backBtn = document.getElementById('backToListBtn');
+  if (backBtn) backBtn.onclick = () => { editingProductId = null; renderAdminBody(); };
+
+  const imgInput = document.getElementById('imgInput');
+  if (imgInput) {
+    imgInput.onchange = () => {
+      const file = imgInput.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('حجم عکس باید کمتر از ۵ مگابایت باشد');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        compressImage(e.target.result, 0.72, 900).then(compressed => {
+          const box = document.getElementById('imgBox');
+          box.innerHTML = `<img src="${compressed}" id="imgPrev"><input type="file" accept="image/*" id="imgInput">`;
+          document.getElementById('imgInput').onchange = imgInput.onchange;
+          box.dataset.tempImage = compressed;
+        }).catch(() => {
+          const box = document.getElementById('imgBox');
+          box.innerHTML = `<img src="${e.target.result}" id="imgPrev"><input type="file" accept="image/*" id="imgInput">`;
+          document.getElementById('imgInput').onchange = imgInput.onchange;
+          box.dataset.tempImage = e.target.result;
+        });
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+  const removeImg = document.getElementById('removeImgBtn');
+  if (removeImg) removeImg.onclick = () => {
+    const box = document.getElementById('imgBox');
+    box.innerHTML = '<span style="color:var(--silver-dim);font-size:12px">برای آپلود کلیک کنید</span><input type="file" accept="image/*" id="imgInput">';
+    box.dataset.tempImage = '';
+    document.getElementById('imgInput').onchange = imgInput ? imgInput.onchange : null;
+  };
+
+  const addFeat = document.getElementById('addFeatBtn');
+  if (addFeat) addFeat.onclick = () => {
+    const list = document.getElementById('featList');
+    const i = list.children.length;
+    const div = document.createElement('div');
+    div.className = 'row2';
+    div.style.marginBottom = '6px';
+    div.innerHTML = `<input data-fk="${i}" placeholder="عنوان مشخصه"><input data-fv="${i}" placeholder="مقدار">`;
+    list.appendChild(div);
+  };
+
+  const saveBtn = document.getElementById('saveProductBtn');
+  if (saveBtn) saveBtn.onclick = () => {
+    const isNew = editingProductId === 'new';
+    let p = isNew ? { id: nextProductId(), reviews: [] } : PRODUCTS.find(x => x.id === editingProductId);
+    if (!p) return;
+
+    p.name = document.getElementById('fName').value.trim();
+    p.cat = document.getElementById('fCat').value;
+    p.price = parseInt(document.getElementById('fPrice').value) || 0;
+    p.stock = parseInt(document.getElementById('fStock').value) || 0;
+    p.gem = document.getElementById('fGem').value.trim() || '#c9ced4';
+    p.notes = document.getElementById('fNotes').value.trim();
+
+    const sizesRaw = document.getElementById('fSizes').value.trim();
+    p.sizes = sizesRaw ? sizesRaw.split(/[,،]/).map(s => s.trim()).filter(Boolean) : null;
+
+    const features = {};
+    document.querySelectorAll('#featList [data-fk]').forEach(inp => {
+      const i = inp.dataset.fk;
+      const k = inp.value.trim();
+      const vEl = document.querySelector(`#featList [data-fv="${i}"]`);
+      const v = vEl ? vEl.value.trim() : '';
+      if (k) features[k] = v;
+    });
+    p.features = features;
+
+    const box = document.getElementById('imgBox');
+    if (box && box.dataset.tempImage !== undefined) {
+      p.image = box.dataset.tempImage || null;
+    } else if (document.getElementById('imgPrev')) {
+      // keep existing
+    } else {
+      p.image = null;
+    }
+
+    if (!p.name) { showToast('نام محصول الزامی است'); return; }
+
+    if (isNew) PRODUCTS.push(p);
+    saveProducts();
+    renderProducts();
+    editingProductId = null;
+    renderAdminBody();
+    showToast(isNew ? 'محصول اضافه شد' : 'تغییرات ذخیره شد');
+    if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+  };
+
+  // Inventory stock +/-
+  document.querySelectorAll('[data-stock-inc]').forEach(btn => {
+    btn.onclick = () => {
+      const p = PRODUCTS.find(x => x.id === parseInt(btn.dataset.stockInc));
+      if (p) { p.stock = (p.stock||0) + 1; saveProducts(); renderProducts(); renderAdminBody(); }
+    };
+  });
+  document.querySelectorAll('[data-stock-dec]').forEach(btn => {
+    btn.onclick = () => {
+      const p = PRODUCTS.find(x => x.id === parseInt(btn.dataset.stockDec));
+      if (p) { p.stock = Math.max(0, (p.stock||0) - 1); saveProducts(); renderProducts(); renderAdminBody(); }
+    };
+  });
+
+  // Loyalty
+  const saveCur = document.getElementById('saveCurPointsBtn');
+  if (saveCur) saveCur.onclick = () => {
+    loyaltyPoints = parseInt(document.getElementById('curPointsInput').value) || 0;
+    document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
+    saveLoyalty();
+    showToast('امتیاز ذخیره شد');
+  };
+  const saveAllL = document.getElementById('saveAllLoyaltyBtn');
+  if (saveAllL) saveAllL.onclick = () => {
+    document.querySelectorAll('[data-lp]').forEach(inp => {
+      const id = parseInt(inp.dataset.lp);
+      const c = loyaltyCustomers.find(x => x.id === id);
+      if (c) c.points = parseInt(inp.value) || 0;
+    });
+    saveLoyalty();
+    showToast('امتیاز مشتریان ذخیره شد');
+  };
+
+  // Discounts
+  const addDisc = document.getElementById('addDiscountBtn');
+  if (addDisc) addDisc.onclick = () => {
+    const code = (document.getElementById('newDiscCode').value || '').trim().toUpperCase();
+    const type = document.getElementById('newDiscType').value;
+    const val = parseInt(document.getElementById('newDiscValue').value) || 0;
+    const note = (document.getElementById('newDiscNote').value || '').trim();
+    if (!code || val <= 0) { showToast('کد و مقدار تخفیف را وارد کنید'); return; }
+    if (discounts.some(d => d.code.toUpperCase() === code)) { showToast('این کد قبلاً وجود دارد'); return; }
+    const item = { code, active: true, note };
+    if (type === 'percent') item.percent = Math.min(100, val);
+    else item.amount = val;
+    discounts.push(item);
+    saveDiscounts();
+    renderAdminBody();
+    showToast('کد تخفیف اضافه شد');
+  };
+  document.querySelectorAll('[data-toggle-discount]').forEach(btn => {
+    btn.onclick = () => {
+      const i = parseInt(btn.dataset.toggleDiscount);
+      if (discounts[i]) {
+        discounts[i].active = discounts[i].active === false ? true : false;
+        saveDiscounts();
+        renderAdminBody();
+      }
+    };
+  });
+  document.querySelectorAll('[data-del-discount]').forEach(btn => {
+    btn.onclick = () => {
+      const i = parseInt(btn.dataset.delDiscount);
+      if (!confirm('حذف این کد تخفیف؟')) return;
+      discounts.splice(i, 1);
+      saveDiscounts();
+      renderAdminBody();
+      showToast('کد حذف شد');
+    };
+  });
+
+  // Settings / payment
+  const savePay = document.getElementById('savePaymentBtn');
+  if (savePay) savePay.onclick = () => {
+    CARD_INFO.owner = document.getElementById('setOwner').value.trim();
+    CARD_INFO.bank = document.getElementById('setBank').value.trim();
+    CARD_INFO.number = document.getElementById('setCard').value.trim();
+    CARD_INFO.sheba = document.getElementById('setSheba').value.trim();
+    savePaymentInfo();
+    showToast('اطلاعات پرداخت ذخیره شد');
+  };
+}
+
+
 /* ---------------- Init ---------------- */
+loadPaymentInfo();
+loadProducts();
+loadLoyalty();
+loadDiscounts();
+loadOrders();
+document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
+checkAdmin();
 renderChips();
 renderProducts();
 renderCartBar();
