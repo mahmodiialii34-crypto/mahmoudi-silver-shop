@@ -1,6 +1,13 @@
 {
   "name": "mahmoudi-silver-shop",
+  "version": "1.0.0",
   "scripts": {
-    "start": "npx serve -s . -l $PORT"
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
   }
 }
