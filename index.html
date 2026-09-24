@@ -594,22 +594,36 @@ let adminTab = 'products';
 let editingProductId = null; // null = list mode, number = edit, 'new' = add
 let loyaltyCustomers = []; // {id, name, points, phone}
 
-/* ---------- Persistence ---------- */
-function loadProducts(){
+/* ---------- Persistence (Render API) ---------- */
+async function loadProducts(){
+  try {
+    const data = await apiGet('/api/products');
+    if (data.products && data.products.length) {
+      PRODUCTS = data.products;
+      return;
+    }
+  } catch(e){ console.warn(e); }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      PRODUCTS = JSON.parse(raw);
+    if (raw) { PRODUCTS = JSON.parse(raw); return; }
+  } catch(e){}
+  PRODUCTS = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+  await saveProducts();
+}
+async function saveProducts(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(PRODUCTS)); } catch(e){}
+  try { await apiPut('/api/products', { products: PRODUCTS }); }
+  catch(e){ showToast('ذخیره روی سرور ناموفق'); }
+}
+async function loadLoyalty(){
+  try {
+    const data = await apiGet('/api/loyalty');
+    if (data.loyalty) {
+      loyaltyPoints = data.loyalty.current || 120;
+      loyaltyCustomers = data.loyalty.customers || [];
       return;
     }
   } catch(e){}
-  PRODUCTS = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-  saveProducts();
-}
-function saveProducts(){
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(PRODUCTS)); } catch(e){ console.warn('storage full', e); }
-}
-function loadLoyalty(){
   try {
     const raw = localStorage.getItem(LOYALTY_KEY);
     if (raw) {
@@ -622,16 +636,19 @@ function loadLoyalty(){
   loyaltyCustomers = [
     { id:1, name:'زهرا محمدی', phone:'0912***1234', points:120 },
     { id:2, name:'امیر رضایی', phone:'0935***5678', points:80 },
-    { id:3, name:'سارا کریمی', phone:'0910***9012', points:45 },
+    { id:3, name:'سارا کریمی', phone:'0910***9012', points:45 }
   ];
-  saveLoyalty();
+  await saveLoyalty();
 }
-function saveLoyalty(){
+async function saveLoyalty(){
+  try { localStorage.setItem(LOYALTY_KEY, JSON.stringify({ current: loyaltyPoints, customers: loyaltyCustomers })); } catch(e){}
+  try { await apiPut('/api/loyalty', { loyalty: { current: loyaltyPoints, customers: loyaltyCustomers } }); } catch(e){}
+}
+async function loadDiscounts(){
   try {
-    localStorage.setItem(LOYALTY_KEY, JSON.stringify({ current: loyaltyPoints, customers: loyaltyCustomers }));
+    const data = await apiGet('/api/discounts');
+    if (data.discounts) { discounts = data.discounts; return; }
   } catch(e){}
-}
-function loadDiscounts(){
   try {
     const raw = localStorage.getItem(DISCOUNT_KEY);
     if (raw) { discounts = JSON.parse(raw); return; }
@@ -640,10 +657,11 @@ function loadDiscounts(){
     { code:'SILVER10', percent:10, active:true, note:'۱۰٪ تخفیف ویژه' },
     { code:'WELCOME50', amount:50000, active:true, note:'۵۰ هزار تومان تخفیف اولین خرید' }
   ];
-  saveDiscounts();
+  await saveDiscounts();
 }
-function saveDiscounts(){
+async function saveDiscounts(){
   try { localStorage.setItem(DISCOUNT_KEY, JSON.stringify(discounts)); } catch(e){}
+  try { await apiPut('/api/discounts', { discounts }); } catch(e){}
 }
 function loadOrders(){
   try {
@@ -651,17 +669,19 @@ function loadOrders(){
     if (raw) recentOrders = JSON.parse(raw);
   } catch(e){}
 }
-function loadPaymentInfo(){
+async function loadPaymentInfo(){
+  try {
+    const data = await apiGet('/api/payment');
+    if (data.payment) { CARD_INFO = { ...CARD_INFO, ...data.payment }; return; }
+  } catch(e){}
   try {
     const raw = localStorage.getItem(PAYMENT_KEY);
-    if (raw) {
-      const data = JSON.parse(raw);
-      CARD_INFO = { ...CARD_INFO, ...data };
-    }
+    if (raw) CARD_INFO = { ...CARD_INFO, ...JSON.parse(raw) };
   } catch(e){}
 }
-function savePaymentInfo(){
+async function savePaymentInfo(){
   try { localStorage.setItem(PAYMENT_KEY, JSON.stringify(CARD_INFO)); } catch(e){}
+  try { await apiPut('/api/payment', { payment: CARD_INFO }); } catch(e){}
 }
 function nextProductId(){
   return PRODUCTS.reduce((m,p) => Math.max(m, p.id||0), 0) + 1;
@@ -1769,16 +1789,20 @@ function bindAdminEvents(){
 
 
 /* ---------------- Init ---------------- */
-loadPaymentInfo();
-loadProducts();
-loadLoyalty();
-loadDiscounts();
-loadOrders();
-document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
-checkAdmin();
-renderChips();
-renderProducts();
-renderCartBar();
+(async function initApp(){
+  showToast('در حال بارگذاری از سرور...');
+  await loadPaymentInfo();
+  await loadProducts();
+  await loadLoyalty();
+  await loadDiscounts();
+  loadOrders();
+  document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
+  checkAdmin();
+  renderChips();
+  renderProducts();
+  renderCartBar();
+  showToast('متصل به سرور');
+})();
 </script>
 </body>
 </html>
