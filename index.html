@@ -522,7 +522,24 @@ let CARD_INFO = {
 const AI_BACKEND_URL = 'https://YOUR-BACKEND-DOMAIN.example.com/api/ai-chat';
 const AI_DEMO_MODE = true;
 const ADMIN_ID = 1560574162;  // شناسه تلگرام ادمین
+const API_BASE = '';
+const ADMIN_SECRET = 'mahmoudi2026';
 const STORAGE_KEY = 'mahmoudi_products_v3';
+
+async function apiGet(path){
+  const res = await fetch(API_BASE + path);
+  if (!res.ok) throw new Error('GET ' + path + ' ' + res.status);
+  return res.json();
+}
+async function apiPut(path, body){
+  const res = await fetch(API_BASE + path, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_SECRET },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('PUT ' + path + ' ' + res.status);
+  return res.json();
+}
 const LOYALTY_KEY = 'mahmoudi_loyalty_v1';
 const DISCOUNT_KEY = 'mahmoudi_discounts_v1';
 const ORDERS_KEY = 'mahmoudi_orders_v1';
