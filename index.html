@@ -9,16 +9,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --graphite:#1b1b1d;
-    --velvet:#3a1620;
-    --velvet-2:#4a1c28;
-    --silver:#d7dbe0;
-    --silver-dim:#9a9fa6;
-    --chrome:#eef1f4;
-    --ember:#8a4b3a;
-    --ivory:#f2efe9;
-    --gold:#c9a961;
-    --good:#5a8f6b;
+    --graphite:#0d1b2a;
+    --velvet:#132b3f;
+    --velvet-2:#1d3a5a;
+    --silver:#edf3f8;
+    --silver-dim:#a7b8c9;
+    --chrome:#f5f9ff;
+    --ember:#2b4f73;
+    --ivory:#e8edf5;
+    --gold:#dfeaf6;
+    --good:#76b29b;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -49,7 +49,11 @@
   }
   .icon-btn svg{width:18px; height:18px;}
   .brand-center{display:flex; flex-direction:column; align-items:center; flex:1; min-width:0;}
-  .logo-img{width:40px; height:40px; border-radius:50%; object-fit:cover; margin-bottom:4px; box-shadow:0 2px 8px #00000060;}
+  .brand-mark{
+    width:28px; height:28px; border-radius:8px; margin-bottom:4px; display:flex; align-items:center; justify-content:center;
+    background:transparent; color:#f5f9ff; font-weight:800; font-size:17px; letter-spacing:-1px; line-height:1;
+    box-shadow:none; border:none; padding:0;
+  }
   .brand{font-size:17px; font-weight:800; color:var(--chrome); white-space:nowrap;}
   .tagline{font-size:11px; color:var(--silver-dim); margin-top:2px;}
 
@@ -59,6 +63,39 @@
     font-size:11.5px; color:var(--silver-dim);
   }
   .loyalty-strip b{color:var(--gold);}
+
+  .hero-banner{
+    margin:14px 16px 0; background:linear-gradient(135deg, rgba(17,31,47,0.98), rgba(28,53,78,0.9));
+    border:1px solid #d7dbe022; border-radius:20px; padding:18px 18px 16px; box-shadow:0 18px 45px rgba(0,0,0,0.18);
+  }
+  .hero-badge{ display:inline-block; padding:6px 10px; border-radius:999px; background:#edf3f8; color:var(--graphite); font-size:10px; font-weight:800; }
+  .hero-banner h2{ margin:12px 0 8px; font-size:20px; line-height:1.5; color:var(--chrome); }
+  .hero-banner p{ margin:0; color:var(--silver-dim); font-size:12.5px; line-height:1.8; }
+  .hero-actions{ display:flex; gap:8px; margin-top:14px; }
+  .hero-actions button{ flex:1; padding:11px 12px; border-radius:12px; border:none; font-family:inherit; font-weight:800; cursor:pointer; }
+  .hero-actions .primary{ background:var(--silver); color:var(--graphite); }
+  .hero-actions .secondary{ background:transparent; border:1px solid #d7dbe030; color:var(--silver); }
+  .stats-grid{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin:14px 16px 0; }
+  .stat-tile{ background:#ffffff08; border:1px solid #d7dbe022; border-radius:16px; padding:12px 10px; text-align:center; }
+  .stat-tile .value{ font-size:18px; font-weight:800; color:var(--gold); }
+  .stat-tile .label{ font-size:10.5px; color:var(--silver-dim); margin-top:4px; }
+
+  .premium-panel, .faq-panel{
+    margin:18px 16px 0; background:rgba(255,255,255,0.04); border:1px solid #d7dbe022; border-radius:18px; padding:16px;
+  }
+  .premium-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; }
+  .trust-box{ background:#ffffff08; border-radius:14px; padding:12px 10px; text-align:center; }
+  .trust-box .icon{ font-size:20px; margin-bottom:6px; }
+  .trust-box .title{ font-size:12px; font-weight:700; color:var(--chrome); }
+  .trust-box .copy{ font-size:10.5px; color:var(--silver-dim); margin-top:4px; line-height:1.7; }
+  .faq-panel h3{ margin:0 0 12px; color:var(--chrome); font-size:15px; }
+  .faq-item{ border:1px solid #d7dbe022; background:#ffffff08; border-radius:12px; margin-bottom:8px; overflow:hidden; }
+  .faq-q{ padding:12px 14px; font-size:12.5px; font-weight:700; color:var(--chrome); display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+  .faq-q span:last-child{ color:var(--gold); font-size:16px; transition:transform .2s; }
+  .faq-item.open .faq-q span:last-child{ transform:rotate(45deg); }
+  .faq-a{ max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .faq-item.open .faq-a{ max-height:120px; }
+  .faq-a p{ margin:0; padding:0 14px 12px; font-size:11.5px; line-height:1.8; color:var(--silver-dim); }
 
   .search-wrap{overflow:hidden; max-height:0; transition:max-height .25s;}
   .search-wrap.open{max-height:60px; margin-top:10px;}
@@ -424,9 +461,66 @@
   </div>
 </header>
 
+<section class="hero-banner">
+  <div class="hero-badge">فروشگاه رسمی نقره محمودی</div>
+  <h2>زیورآلات نقره اصل با طراحی شیک و ماندگار</h2>
+  <p>ارسال سریع، گارانتی اصالت، و پشتیبانی حرفه‌ای برای خرید مطمئن و تجربه‌ای لوکس.</p>
+  <div class="hero-actions">
+    <button class="primary" id="heroBrowseBtn">مشاهده محصولات</button>
+    <button class="secondary" id="heroSupportBtn">پشتیبانی</button>
+  </div>
+</section>
+
+<div class="stats-grid" id="statsGrid">
+  <div class="stat-tile"><div class="value" id="statProducts">0</div><div class="label">محصول</div></div>
+  <div class="stat-tile"><div class="value" id="statStock">0</div><div class="label">موجودی کل</div></div>
+  <div class="stat-tile"><div class="value" id="statShipping">۱-۲</div><div class="label">روز ارسال</div></div>
+</div>
+
 <div class="chips" id="chips"></div>
 
 <main id="product-list"></main>
+
+<section class="premium-panel">
+  <div class="premium-grid">
+    <div class="trust-box">
+      <div class="icon">🚚</div>
+      <div class="title">ارسال سریع</div>
+      <div class="copy">تحویل در ۱ تا ۲ روز کاری</div>
+    </div>
+    <div class="trust-box">
+      <div class="icon">✅</div>
+      <div class="title">اصالت کالا</div>
+      <div class="copy">نقره ۹۲۵ با گارانتی اصالت</div>
+    </div>
+    <div class="trust-box">
+      <div class="icon">💬</div>
+      <div class="title">پشتیبانی حرفه‌ای</div>
+      <div class="copy">پاسخ‌گویی سریع و مشاوره خرید</div>
+    </div>
+    <div class="trust-box">
+      <div class="icon">🔒</div>
+      <div class="title">پرداخت امن</div>
+      <div class="copy">ثبت سفارش و واریز با پیگیری کامل</div>
+    </div>
+  </div>
+</section>
+
+<section class="faq-panel">
+  <h3>سوالات متداول</h3>
+  <div class="faq-item open">
+    <div class="faq-q"><span>ارسال محصولات چقدر طول می‌کشد؟</span><span>＋</span></div>
+    <div class="faq-a"><p>بیشتر سفارش‌ها در ۱ تا ۲ روز کاری ارسال می‌شوند و وضعیت آن از طریق پیام‌رسان یا تماس به شما اطلاع‌رسانی می‌شود.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q"><span>نقره‌ها اصل هستند؟</span><span>＋</span></div>
+    <div class="faq-a"><p>بله، کلیه محصولات با عیار ۹۲۵ و با کنترل کیفی دقیق ارائه می‌شوند و روی بسته‌بندی به‌صورت رسمی مشخص می‌باشد.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q"><span>اگر محصول ایراد داشت چه کنیم؟</span><span>＋</span></div>
+    <div class="faq-a"><p>در صورت وجود مشکل در ارسال یا کیفیت، با پشتیبانی تماس بگیرید و بررسی سریع انجام می‌شود؛ در صورت نیاز تعویض یا برگشت بررسی می‌شود.</p></div>
+  </div>
+</section>
 
 <div class="cart-bar" id="cartBar">
   <div class="left"><span class="count" id="cartCount">0</span> مشاهده سبد خرید</div>
@@ -522,7 +616,7 @@ let CARD_INFO = {
 const AI_BACKEND_URL = 'https://YOUR-BACKEND-DOMAIN.example.com/api/ai-chat';
 const AI_DEMO_MODE = true;
 const ADMIN_ID = 1560574162;  // شناسه تلگرام ادمین
-const API_BASE = '';
+const API_BASE = (window.location.hostname === 'localhost' && window.location.port === '8000') ? 'http://localhost:3000' : '';
 const ADMIN_SECRET = 'mahmoudi2026';
 const STORAGE_KEY = 'mahmoudi_products_v3';
 
@@ -544,6 +638,7 @@ const LOYALTY_KEY = 'mahmoudi_loyalty_v1';
 const DISCOUNT_KEY = 'mahmoudi_discounts_v1';
 const ORDERS_KEY = 'mahmoudi_orders_v1';
 const PAYMENT_KEY = 'mahmoudi_payment_v1';
+const SYNC_POLL_MS = 5000;
 
 /* ---------------- Data ---------------- */
 const RING_SIZES = ['۴۹','۵۱','۵۳','۵۵','۵۷'];
@@ -663,11 +758,36 @@ async function saveDiscounts(){
   try { localStorage.setItem(DISCOUNT_KEY, JSON.stringify(discounts)); } catch(e){}
   try { await apiPut('/api/discounts', { discounts }); } catch(e){}
 }
-function loadOrders(){
+async function loadOrders(){
+  try {
+    const data = await apiGet('/api/orders');
+    if (Array.isArray(data.orders)) {
+      recentOrders = data.orders;
+      return;
+    }
+  } catch (e) { console.warn('load orders from server failed', e); }
+
   try {
     const raw = localStorage.getItem(ORDERS_KEY);
     if (raw) recentOrders = JSON.parse(raw);
   } catch(e){}
+}
+async function saveOrdersToServer(){
+  try {
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(recentOrders));
+  } catch(e){}
+
+  try {
+    const res = await fetch(API_BASE + '/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orders: recentOrders })
+    });
+
+    if (!res.ok) throw new Error('save orders failed:' + res.status);
+  } catch (e) {
+    console.warn('saveOrdersToServer failed', e);
+  }
 }
 async function loadPaymentInfo(){
   try {
@@ -682,6 +802,40 @@ async function loadPaymentInfo(){
 async function savePaymentInfo(){
   try { localStorage.setItem(PAYMENT_KEY, JSON.stringify(CARD_INFO)); } catch(e){}
   try { await apiPut('/api/payment', { payment: CARD_INFO }); } catch(e){}
+}
+async function refreshSharedState({ silent = false } = {}) {
+  try {
+    const [productsData, loyaltyData, discountsData, paymentData] = await Promise.all([
+      apiGet('/api/products').catch(() => null),
+      apiGet('/api/loyalty').catch(() => null),
+      apiGet('/api/discounts').catch(() => null),
+      apiGet('/api/payment').catch(() => null)
+    ]);
+
+    if (productsData && Array.isArray(productsData.products)) {
+      PRODUCTS = productsData.products;
+    }
+    if (loyaltyData && loyaltyData.loyalty) {
+      loyaltyPoints = loyaltyData.loyalty.current || 120;
+      loyaltyCustomers = loyaltyData.loyalty.customers || [];
+      document.getElementById('loyaltyPoints')?.textContent = faDigits(loyaltyPoints);
+    }
+    if (discountsData && Array.isArray(discountsData.discounts)) {
+      discounts = discountsData.discounts;
+    }
+    if (paymentData && paymentData.payment) {
+      CARD_INFO = { ...CARD_INFO, ...paymentData.payment };
+    }
+
+    if (!silent) showToast('به‌روزرسانی داده‌ها انجام شد');
+    renderProducts();
+    renderCartBar();
+    if (document.getElementById('adminSheet')?.classList.contains('show')) {
+      renderAdminBody();
+    }
+  } catch (err) {
+    console.warn('sync failed', err);
+  }
 }
 function nextProductId(){
   return PRODUCTS.reduce((m,p) => Math.max(m, p.id||0), 0) + 1;
@@ -730,6 +884,31 @@ document.getElementById('searchInput').addEventListener('input', e => {
   searchQuery = e.target.value.trim();
   renderProducts();
 });
+document.getElementById('heroBrowseBtn').onclick = () => {
+  document.getElementById('product-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+document.getElementById('heroSupportBtn').onclick = () => {
+  document.getElementById('aiFab').click();
+};
+
+function renderStoreStats(){
+  const totalProducts = PRODUCTS.length || 0;
+  const totalStock = PRODUCTS.reduce((sum, p) => sum + (Number(p.stock) || 0), 0);
+  document.getElementById('statProducts').textContent = faDigits(totalProducts);
+  document.getElementById('statStock').textContent = faDigits(totalStock);
+}
+
+function initFaqs(){
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    if (!q) return;
+    q.onclick = () => {
+      const open = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+      if (!open) item.classList.add('open');
+    };
+  });
+}
 
 /* ---------------- Share bot ---------------- */
 document.getElementById('shareBotBtn').onclick = () => {
@@ -1220,13 +1399,15 @@ function submitOrder(){
     createdAt: new Date().toISOString()
   };
 
-  // ذخیره سفارش برای مشاهده در پنل ادمین (بدون عکس کامل برای جلوگیری از پر شدن storage)
+  // ذخیره سفارش برای مشاهده در پنل ادمین و همگام‌سازی روی سرور برای همه کاربران
   recentOrders.unshift({
     ...payload,
+    receiptPreview: receiptDataUrl ? receiptDataUrl.substring(0, 12000) : null,
     receiptThumb: receiptDataUrl ? receiptDataUrl.substring(0, 80) + '…' : null
   });
   if (recentOrders.length > 50) recentOrders = recentOrders.slice(0, 50);
   try { localStorage.setItem(ORDERS_KEY, JSON.stringify(recentOrders)); } catch(e){}
+  saveOrdersToServer().catch(() => {});
 
   // امتیاز وفاداری
   const pts = Math.round(rewardForOrder() / 1000);
@@ -1234,13 +1415,50 @@ function submitOrder(){
   document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
   saveLoyalty();
 
-  // ارسال به ربات — عکس رسید به‌خاطر محدودیت حجم sendData ارسال نمی‌شود
-  // کاربر باید عکس را جداگانه با شماره پیگیری به ربات بفرستد (ربات آن را به ادمین فوروارد می‌کند)
+  // ارسال حرفه‌ای به ربات تلگرام: خلاصه سفارش + اطلاعات مشتری + تصویر رسید فشرده‌شده
   if (tg) {
     tg.HapticFeedback && tg.HapticFeedback.notificationOccurred('success');
     try {
-      // فقط متادیتای سفارش (بدون base64 عکس) ارسال می‌شود
-      tg.sendData(JSON.stringify(payload));
+      const itemsText = lines.map(item => `- ${item.name}${item.size ? ` (${item.size})` : ''} × ${item.qty} = ${formatPrice(item.price * item.qty)} تومان`).join('\n');
+      const orderSummary = [
+        '🛍️ سفارش جدید از فروشگاه گالری نقره محمودی',
+        `کد سفارش: ${orderId}`,
+        `نام مشتری: ${address.name}`,
+        `شماره تماس: ${address.phone}`,
+        `شهر: ${address.city}`,
+        `آدرس: ${address.full}`,
+        `روش ارسال: ${selectedShipping ? selectedShipping.name : 'نامشخص'}`,
+        `تخفیف: ${appliedDiscount ? `${appliedDiscount.code} (${formatPrice(discountAmount())} تومان)` : 'بدون تخفیف'}`,
+        `جمع سفارش: ${formatPrice(cartSummary().total)} تومان`,
+        `هزینه ارسال: ${formatPrice(shippingCost())} تومان`,
+        `مبلغ نهایی: ${formatPrice(grandTotal())} تومان`,
+        'محصولات:',
+        itemsText,
+        `شماره کارت آخر: ${last4 || '—'}`,
+        `تاریخ: ${new Date().toLocaleString('fa-IR')}`
+      ].join('\n');
+
+      const telegramPayload = {
+        type: 'new_order',
+        orderId,
+        customerName: address.name,
+        customerPhone: address.phone,
+        customerCity: address.city,
+        customerAddress: address.full,
+        postalCode: address.postal || '',
+        shippingMethod: selectedShipping ? selectedShipping.name : null,
+        subtotal: cartSummary().total,
+        shippingCost: shippingCost(),
+        discountAmount: discountAmount(),
+        total: grandTotal(),
+        items: lines,
+        last4,
+        receiptPreview: receiptDataUrl ? receiptDataUrl.substring(0, 12000) : null,
+        telegramMessage: orderSummary,
+        createdAt: new Date().toISOString()
+      };
+
+      tg.sendData(JSON.stringify(telegramPayload));
     } catch(e) {
       console.warn('sendData failed', e);
     }
@@ -1437,9 +1655,7 @@ function adminSettingsHtml(){
     </div>
     <div style="margin-top:20px;padding:12px;background:#ffffff08;border-radius:12px;font-size:11.5px;color:var(--silver-dim);line-height:1.8">
       <b style="color:var(--chrome)">نکته مهم درباره رسید:</b><br>
-      به دلیل محدودیت حجم پیام تلگرام (sendData)، عکس رسید مستقیماً از مینی‌اپ به ربات ارسال نمی‌شود.
-      سفارش (با شماره پیگیری) به ربات فرستاده می‌شود و کاربر باید عکس رسید را جداگانه با ذکر همان شماره به ربات بفرستد.
-      ربات شما باید آن پیام را به شما (ادمین) فوروارد کند.
+      بعد از ثبت سفارش، اطلاعات کامل مشتری و شماره تماس به همراه جزئیات خرید و پیش‌نمایش رسید به ربات تلگرام ارسال می‌شود. در صورت نیاز، این داده‌ها در بات شما قابل ثبت و فوروارد به ادمین هستند.
     </div>`;
 }
 
@@ -1787,21 +2003,58 @@ function bindAdminEvents(){
   };
 }
 
+(function replaceBrandHeader(){
+  const brandCenter = document.querySelector('.brand-center');
+  if (!brandCenter) return;
+  brandCenter.innerHTML = `
+    <div class="brand-mark" aria-label="لوگوی گالری نقره محمودی">M</div>
+    <div class="brand">گالری نقره محمودی</div>
+    <div class="tagline">زیورآلات نقره اصل، دست‌ساز و آبکاری‌شده</div>
+  `;
+})();
 
 /* ---------------- Init ---------------- */
 (async function initApp(){
-  showToast('در حال بارگذاری از سرور...');
-  await loadPaymentInfo();
-  await loadProducts();
-  await loadLoyalty();
-  await loadDiscounts();
-  loadOrders();
+  PRODUCTS = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
   document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
   checkAdmin();
+  initFaqs();
   renderChips();
+  renderStoreStats();
   renderProducts();
   renderCartBar();
-  showToast('متصل به سرور');
+
+  window.addEventListener('storage', (event) => {
+    if ([STORAGE_KEY, LOYALTY_KEY, DISCOUNT_KEY, PAYMENT_KEY].includes(event.key)) {
+      refreshSharedState({ silent: true });
+    }
+  });
+  window.addEventListener('focus', () => refreshSharedState({ silent: true }));
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) refreshSharedState({ silent: true });
+  });
+  setInterval(() => refreshSharedState({ silent: true }), SYNC_POLL_MS);
+
+  showToast('در حال بارگذاری از سرور...');
+  try {
+    await Promise.all([
+      loadPaymentInfo(),
+      loadProducts(),
+      loadLoyalty(),
+      loadDiscounts()
+    ]);
+    loadOrders();
+    document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
+    initFaqs();
+    renderChips();
+    renderStoreStats();
+    renderProducts();
+    renderCartBar();
+    showToast('متصل به سرور');
+  } catch (err) {
+    console.warn('init app failed', err);
+    showToast('بارگذاری محلی انجام شد');
+  }
 })();
 </script>
 </body>
