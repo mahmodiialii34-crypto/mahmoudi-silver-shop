@@ -49,10 +49,11 @@
   }
   .icon-btn svg{width:18px; height:18px;}
   .brand-center{display:flex; flex-direction:column; align-items:center; flex:1; min-width:0;}
+  .brand-center .logo-img{display:block; width:48px; height:48px; object-fit:contain;}
   .brand-mark{
-    width:28px; height:28px; border-radius:8px; margin-bottom:4px; display:flex; align-items:center; justify-content:center;
-    background:transparent; color:#f5f9ff; font-weight:800; font-size:17px; letter-spacing:-1px; line-height:1;
-    box-shadow:none; border:none; padding:0;
+    width:36px; height:36px; border-radius:50%; margin-bottom:4px; display:flex; align-items:center; justify-content:center;
+    background:var(--silver); color:var(--graphite); font-weight:800; font-size:19px; line-height:1;
+    box-shadow:0 2px 10px #00000050; border:2px solid #ffffff; padding:0;
   }
   .brand{font-size:17px; font-weight:800; color:var(--chrome); white-space:nowrap;}
   .tagline{font-size:11px; color:var(--silver-dim); margin-top:2px;}
@@ -643,7 +644,7 @@ const SYNC_POLL_MS = 5000;
 /* ---------------- Data ---------------- */
 const RING_SIZES = ['۴۹','۵۱','۵۳','۵۵','۵۷'];
 const DEFAULT_PRODUCTS = [
-  { id:1, cat:'انگشتر', name:'انگشتر نقره فیروزه', notes:'نقره ۹۲۵ عیار، نگین فیروزه نیشابوری', price:1250000, gem:'#2f8a86', stock:12, image:null,
+  { id:1, cat:'انگشتر', name:'انگشتر نقره فیروزه', notes:'نقره ۹۲۵ عیار، نگین فیروزه نیشابوری', price:1250000, gem:'#2f8a86', stock:12, image:'https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=900&q=85',
     sizes:RING_SIZES, features:{'جنس':'نقره ۹۲۵ عیار','وزن':'۳.۲ گرم','نگین':'فیروزه نیشابوری','پوشش':'آبکاری رودیوم'},
     reviews:[{user:'زهرا.م',stars:5,comment:'کیفیتش عالی بود، دقیقاً مثل عکس بود و بسته‌بندی شیکی داشت.'},{user:'الف.کریمی',stars:4,comment:'زیبا و شیک، فقط کاش سایزبندی دقیق‌تر بود.'},{user:'مهسا',stars:5,comment:'برای هدیه گرفتم، خیلی خوشش اومد.'}] },
   { id:2, cat:'انگشتر', name:'انگشتر نقره سولیتر', notes:'نقره ۹۲۵ عیار، آبکاری رودیوم', price:980000, gem:'#c9ced4', stock:8, image:null,
@@ -694,16 +695,23 @@ async function loadProducts(){
   try {
     const data = await apiGet('/api/products');
     if (data.products && data.products.length) {
-      PRODUCTS = data.products;
+      PRODUCTS = withDefaultProductImages(data.products);
       return;
     }
   } catch(e){ console.warn(e); }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) { PRODUCTS = JSON.parse(raw); return; }
+    if (raw) { PRODUCTS = withDefaultProductImages(JSON.parse(raw)); return; }
   } catch(e){}
   PRODUCTS = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
   await saveProducts();
+}
+function withDefaultProductImages(products){
+  return products.map(product => {
+    if (product.image) return product;
+    const fallback = DEFAULT_PRODUCTS.find(item => item.name === product.name);
+    return fallback && fallback.image ? { ...product, image: fallback.image } : product;
+  });
 }
 async function saveProducts(){
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(PRODUCTS)); } catch(e){}
@@ -813,12 +821,13 @@ async function refreshSharedState({ silent = false } = {}) {
     ]);
 
     if (productsData && Array.isArray(productsData.products)) {
-      PRODUCTS = productsData.products;
+      PRODUCTS = withDefaultProductImages(productsData.products);
     }
     if (loyaltyData && loyaltyData.loyalty) {
       loyaltyPoints = loyaltyData.loyalty.current || 120;
       loyaltyCustomers = loyaltyData.loyalty.customers || [];
-      document.getElementById('loyaltyPoints')?.textContent = faDigits(loyaltyPoints);
+      const loyaltyPointsEl = document.getElementById('loyaltyPoints');
+      if (loyaltyPointsEl) loyaltyPointsEl.textContent = faDigits(loyaltyPoints);
     }
     if (discountsData && Array.isArray(discountsData.discounts)) {
       discounts = discountsData.discounts;
@@ -1239,11 +1248,11 @@ function stepConfirmHtml(){
         <div style="font-size:12.5px;color:var(--silver-dim)">شماره پیگیری سفارش شما</div>
         <div class="oid">${lastOrderId}</div>
         <div style="font-size:11.5px;color:var(--silver-dim); line-height:2;">
-          سفارش شما ثبت شد. تصویر رسید به همراه شماره پیگیری برای ربات ارسال می‌شود.<br>
-          اگر عکس رسید را ندیدید، لطفاً همان عکس را با ذکر <b>${lastOrderId}</b> به‌صورت پیام عادی برای ربات بفرستید تا تایید نهایی شود.<br>
+          سفارش ثبت شد. اطلاعات سفارش را به ربات بفرستید و سپس تصویر رسید را در همان گفتگو همراه کد پیگیری <b>${lastOrderId}</b> ارسال کنید.<br>
           🎁 با این خرید <b style="color:var(--gold)">${faDigits(Math.round(rewardForOrder()/1000))}</b> امتیاز به حساب وفاداری شما اضافه می‌شود.
         </div>
       </div>
+      <div class="nav-row"><button class="btn btn-primary" id="sendOrderToBotBtn">ارسال اطلاعات به ربات</button></div>
       <div class="nav-row"><button class="btn btn-primary" id="closeAfterOrderBtn">بازگشت به فروشگاه</button></div>`;
   }
   const { count, total } = cartSummary();
@@ -1334,9 +1343,17 @@ function bindStepEvents(){
   }
   if (checkoutStep === 4) {
     if (lastOrderId) {
+      const sendOrderBtn = document.getElementById('sendOrderToBotBtn');
+      if (sendOrderBtn) sendOrderBtn.onclick = () => {
+        if (tg && pendingTelegramPayload) {
+          tg.sendData(JSON.stringify(pendingTelegramPayload));
+          return;
+        }
+        window.open(BOT_LINK, '_blank', 'noopener');
+      };
       const closeBtn = document.getElementById('closeAfterOrderBtn');
       if (closeBtn) closeBtn.onclick = () => {
-        cart = {}; selectedShipping = null; last4 = ''; lastOrderId = null; receiptDataUrl = null; appliedDiscount = null;
+        cart = {}; selectedShipping = null; last4 = ''; lastOrderId = null; receiptDataUrl = null; appliedDiscount = null; pendingTelegramPayload = null;
         closeDrawer(); renderProducts(); renderCartBar();
       };
       return;
@@ -1453,12 +1470,11 @@ function submitOrder(){
         total: grandTotal(),
         items: lines,
         last4,
-        receiptPreview: receiptDataUrl ? receiptDataUrl.substring(0, 12000) : null,
         telegramMessage: orderSummary,
         createdAt: new Date().toISOString()
       };
 
-      tg.sendData(JSON.stringify(telegramPayload));
+      pendingTelegramPayload = telegramPayload;
     } catch(e) {
       console.warn('sendData failed', e);
     }
@@ -2006,11 +2022,10 @@ function bindAdminEvents(){
 (function replaceBrandHeader(){
   const brandCenter = document.querySelector('.brand-center');
   if (!brandCenter) return;
-  brandCenter.innerHTML = `
-    <div class="brand-mark" aria-label="لوگوی گالری نقره محمودی">M</div>
-    <div class="brand">گالری نقره محمودی</div>
-    <div class="tagline">زیورآلات نقره اصل، دست‌ساز و آبکاری‌شده</div>
-  `;
+  const logo = brandCenter.querySelector('.logo-img');
+  if (!logo) return;
+  logo.alt = 'لوگوی گالری نقره محمودی';
+  brandCenter.replaceChildren(logo);
 })();
 
 /* ---------------- Init ---------------- */
