@@ -49,7 +49,7 @@
   }
   .icon-btn svg{width:18px; height:18px;}
   .brand-center{display:flex; flex-direction:column; align-items:center; flex:1; min-width:0;}
-  .brand-center .logo-img{display:block; width:48px; height:48px; object-fit:contain;}
+  .brand-center .logo-img{display:block; width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid var(--silver); padding:2px; background:var(--graphite); box-shadow:0 3px 12px #00000055;}
   .brand-mark{
     width:36px; height:36px; border-radius:50%; margin-bottom:4px; display:flex; align-items:center; justify-content:center;
     background:var(--silver); color:var(--graphite); font-weight:800; font-size:19px; line-height:1;
@@ -433,23 +433,107 @@
   .photo img.real-img{width:100%; height:100%; object-fit:cover; border-radius:14px;}
   .detail-photo img.real-img{width:100%; height:100%; object-fit:contain; border-radius:12px;}
 
+  :root{
+    --graphite:#191816;
+    --velvet:#ffffff;
+    --velvet-2:#f3f2ef;
+    --silver:#191816;
+    --silver-dim:#77736d;
+    --chrome:#191816;
+    --ember:#a88b5e;
+    --ivory:#25231f;
+    --gold:#a88b5e;
+    --good:#48775e;
+  }
+  html,body{height:auto; min-height:100%; background:#f2f1ee;}
+  body{width:min(100%,520px); margin:0 auto; background:#fff; color:#191816; padding-bottom:calc(136px + var(--safe-bottom)); box-shadow:0 0 32px #1918160d;}
+  header{padding:12px 18px 8px; background:#ffffffed; border-bottom:1px solid #eeece8; backdrop-filter:blur(14px);}
+  .header-row{min-height:48px;}
+  .icon-btn{border-color:#e7e4de; background:#fff; color:#191816;}
+  .brand-center{display:grid; grid-template-columns:42px auto; grid-template-rows:auto auto; justify-content:center; column-gap:9px; align-items:center;}
+  .brand-center .logo-img{grid-row:1 / 3; width:42px; height:42px; margin:0; border:1px solid #e7e4de; border-radius:50%; object-fit:cover; padding:1px; background:#fff;}
+  .brand{align-self:end; color:#191816; font-size:13px; line-height:1.4;}
+  .tagline{align-self:start; margin:0; color:#77736d; font-size:10px; line-height:1.4;}
+  .loyalty-strip{margin-top:9px; border:0; border-radius:3px; background:#f5f4f1; color:#5f5a52; padding:7px 10px; font-size:10px;}
+  .loyalty-strip b{color:#8c7045;}
+  .hero-banner{position:relative; min-height:390px; margin:0; padding:28px 22px; border:0; border-radius:0; display:flex; flex-direction:column; justify-content:flex-end; background:linear-gradient(135deg,#8f887e,#393630); background-position:center 48%; background-size:cover; box-shadow:none;}
+  .hero-badge{align-self:flex-start; padding:0; background:transparent; color:#eee8dd; font-size:11px; letter-spacing:0;}
+  .hero-banner h2{max-width:330px; margin:10px 0 5px; color:#fff; font-size:25px; line-height:1.45;}
+  .hero-banner p{max-width:340px; color:#ffffffd9; font-size:12px;}
+  .hero-actions{max-width:310px; margin-top:16px;}
+  .hero-actions button{border-radius:3px; font-size:12px;}
+  .hero-actions .primary{background:#fff; color:#191816;}
+  .hero-actions .secondary{border-color:#ffffff80; color:#fff;}
+  .stats-grid{display:none;}
+  .collection-section{padding:24px 18px 0;}
+  .section-heading{display:flex; justify-content:space-between; align-items:end; gap:12px; margin:0 0 13px;}
+  .section-heading h2{margin:0; color:#191816; font-size:17px; line-height:1.4;}
+  .section-heading .eyebrow{display:block; margin-bottom:3px; color:#a88b5e; font-size:9px; font-weight:700;}
+  .section-heading button{border:0; background:none; color:#6f6a62; font:inherit; font-size:10px; white-space:nowrap; cursor:pointer;}
+  .chips{gap:10px; padding:0 0 6px; margin:0 -18px; padding-inline:18px;}
+  .chip{position:relative; display:flex; align-items:flex-end; width:126px; height:164px; padding:12px; overflow:hidden; border:0; border-radius:3px; background:linear-gradient(180deg,#d9d7d2,#a4a09a); background-size:cover; background-position:center; color:#fff; font-size:12px; font-weight:700; box-shadow:inset 0 -70px 42px -40px #171615b8;}
+  .chip.active{outline:2px solid #a88b5e; outline-offset:-2px; background-color:#aaa49a; color:#fff;}
+  .product-heading{padding:25px 18px 0;}
+  main{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px 12px; padding:6px 18px 24px;}
+  .card{display:block; min-width:0; padding:0; margin:0; overflow:visible; border:0; border-radius:0; background:transparent; box-shadow:none;}
+  .card::after{display:none;}
+  .photo{width:100%; height:auto; aspect-ratio:4 / 5; border-radius:2px; background:#f3f2ef !important;}
+  .photo img.real-img{border-radius:2px; object-fit:cover;}
+  .image-badge{position:absolute; top:8px; right:8px; z-index:1; padding:4px 7px; border-radius:2px; background:#ffffffeb; color:#625d54; font-size:9px; line-height:1.4;}
+  .detail-photo .image-badge{top:12px; right:14px;}
+  .photo .ring{width:42px; height:42px; border-color:#aaa49a; box-shadow:none;}
+  .photo .gem{top:calc(50% - 29px);}
+  .info{padding:9px 1px 0;}
+  .name{min-height:42px; color:#22201c; font-size:12px; line-height:1.75;}
+  .rating-row{margin-top:2px;}
+  .stars{color:#a88b5e; font-size:10px;}
+  .rating-count,.notes{display:none;}
+  .row-bottom{margin-top:7px;}
+  .price{color:#191816; font-size:12px;}
+  .price::after{color:#77736d; font-size:9px;}
+  .add-btn{width:29px; height:29px; background:#191816; color:#fff; font-size:17px;}
+  .stepper{background:#f1f0ed; color:#191816;}
+  .stepper button{background:#191816; color:#fff;}
+  .premium-panel,.faq-panel{margin:16px 18px 0; padding:14px; border:1px solid #eeece8; border-radius:3px; background:#fff;}
+  .trust-box,.faq-item{border-radius:3px; background:#f7f6f3;}
+  .faq-panel h3,.faq-q,.trust-box .title{color:#191816;}
+  .faq-item{border-color:#eeece8;}
+  .faq-a p,.trust-box .copy{color:#77736d;}
+  .cart-bar{left:50%; right:auto; bottom:calc(72px + var(--safe-bottom)); width:min(calc(100% - 28px),492px); border:0; border-radius:3px; background:#191816; color:#fff; box-shadow:0 6px 20px #19181622; transform:translate(-50%,120%);}
+  .cart-bar.show{transform:translate(-50%,0);}
+  .cart-bar .count{background:#fff; color:#191816;}
+  .ai-fab{bottom:calc(146px + var(--safe-bottom)); background:#191816; color:#fff;}
+  .drawer,.detail-sheet{background:#fff; color:#191816;}
+  .drawer h3,.detail-name,.feature-item .fv,.drawer-total{color:#191816;}
+  .drawer-item{border-color:#eeece8;}
+  .form-block input,.form-block textarea,.search-wrap input,.chat-input-row input{background:#f7f6f3; color:#191816; border-color:#e7e4de;}
+  .nav-row .btn-primary,.detail-add-btn{background:#191816; color:#fff;}
+  .bottom-nav{position:fixed; z-index:42; left:50%; bottom:0; width:min(100%,520px); height:calc(64px + var(--safe-bottom)); padding:6px 12px var(--safe-bottom); display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid #ebe9e4; background:#ffffffed; backdrop-filter:blur(14px); transform:translateX(-50%);}
+  .bottom-nav button{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; border:0; background:transparent; color:#77736d; font:inherit; font-size:9px; cursor:pointer;}
+  .bottom-nav svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7;}
+  .bottom-nav button.active{color:#191816;}
+  .toast{top:auto; bottom:calc(132px + var(--safe-bottom)); background:#191816; color:#fff; transform:translateX(-50%) translateY(150%);}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .empty-cart{grid-column:1 / -1; color:#77736d;}
+  @media (min-width:600px){body{margin:16px auto; min-height:calc(100vh - 32px); border-radius:4px;} header{top:16px;} .ai-fab{left:calc(50% - 260px + 16px);}}
+
 </style>
 </head>
 <body>
 
 <header>
   <div class="header-row">
-    <div class="icon-btn" id="searchBtn">
+    <button class="icon-btn" id="searchBtn" aria-label="جستجوی محصولات">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    </div>
+    </button>
     <div class="brand-center">
-      <img class="logo-img" src="data:image/jpeg;base64,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" alt="لوگو">
+      <img class="logo-img" src="brand-logo.jpg" alt="لوگوی گالری نقره محمودی">
       <div class="brand">گالری نقره محمودی</div>
-      <div class="tagline">زیورآلات نقره اصل، دست‌ساز و آبکاری‌شده</div>
+      <div class="tagline">نقرهٔ اصیل، برای هر روز</div>
     </div>
-    <div class="icon-btn" id="shareBotBtn">
+    <button class="icon-btn" id="shareBotBtn" aria-label="اشتراک‌گذاری فروشگاه">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
-    </div>
+    </button>
   </div>
 
   <div class="loyalty-strip">
@@ -478,8 +562,18 @@
   <div class="stat-tile"><div class="value" id="statShipping">۱-۲</div><div class="label">روز ارسال</div></div>
 </div>
 
-<div class="chips" id="chips"></div>
+<section class="collection-section">
+  <div class="section-heading">
+    <div><span class="eyebrow">گالری محمودی</span><h2>کالکشن‌ها</h2></div>
+    <button id="allCategoriesBtn">مشاهده همه</button>
+  </div>
+  <div class="chips" id="chips"></div>
+</section>
 
+<div class="section-heading product-heading" id="productHeading">
+  <div><span class="eyebrow">نقرهٔ ۹۲۵</span><h2>منتخب‌های گالری</h2></div>
+  <button id="showAllProducts">همه محصولات</button>
+</div>
 <main id="product-list"></main>
 
 <section class="premium-panel">
@@ -527,6 +621,21 @@
   <div class="left"><span class="count" id="cartCount">0</span> مشاهده سبد خرید</div>
   <div class="total" id="cartTotal">۰ تومان</div>
 </div>
+
+<nav class="bottom-nav" aria-label="ناوبری فروشگاه">
+  <button class="active" id="navHome">
+    <svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>خانه</span>
+  </button>
+  <button id="navCollections">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg><span>دسته‌ها</span>
+  </button>
+  <button id="navCart">
+    <svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 1.9-1.4L22 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg><span>سبد خرید</span>
+  </button>
+  <button id="navShare">
+    <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4m-6.8 7 6.8 4"/></svg><span>اشتراک</span>
+  </button>
+</nav>
 
 <button class="ai-fab" id="aiFab">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -617,7 +726,15 @@ let CARD_INFO = {
 const AI_BACKEND_URL = 'https://YOUR-BACKEND-DOMAIN.example.com/api/ai-chat';
 const AI_DEMO_MODE = true;
 const ADMIN_ID = 1560574162;  // شناسه تلگرام ادمین
-const API_BASE = (window.location.hostname === 'localhost' && window.location.port === '8000') ? 'http://localhost:3000' : '';
+const API_BASE = (() => {
+  const configured = new URLSearchParams(window.location.search).get('api') || window.MAHMOUDI_API_BASE;
+  if (configured) return configured.replace(/\/+$/, '');
+  if (window.location.protocol === 'file:') return 'http://localhost:3000';
+  if (['localhost', '127.0.0.1'].includes(window.location.hostname) && window.location.port !== '3000') {
+    return `${window.location.protocol}//${window.location.hostname}:3000`;
+  }
+  return '';
+})();
 const ADMIN_SECRET = 'mahmoudi2026';
 const STORAGE_KEY = 'mahmoudi_products_v3';
 
@@ -643,8 +760,9 @@ const SYNC_POLL_MS = 5000;
 
 /* ---------------- Data ---------------- */
 const RING_SIZES = ['۴۹','۵۱','۵۳','۵۵','۵۷'];
+const DEFAULT_PRODUCT_IMAGE = 'default-product.jpg';
 const DEFAULT_PRODUCTS = [
-  { id:1, cat:'انگشتر', name:'انگشتر نقره فیروزه', notes:'نقره ۹۲۵ عیار، نگین فیروزه نیشابوری', price:1250000, gem:'#2f8a86', stock:12, image:'https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=900&q=85',
+  { id:1, cat:'انگشتر', name:'انگشتر نقره فیروزه', notes:'نقره ۹۲۵ عیار، نگین فیروزه نیشابوری', price:1250000, gem:'#2f8a86', stock:12, image:null,
     sizes:RING_SIZES, features:{'جنس':'نقره ۹۲۵ عیار','وزن':'۳.۲ گرم','نگین':'فیروزه نیشابوری','پوشش':'آبکاری رودیوم'},
     reviews:[{user:'زهرا.م',stars:5,comment:'کیفیتش عالی بود، دقیقاً مثل عکس بود و بسته‌بندی شیکی داشت.'},{user:'الف.کریمی',stars:4,comment:'زیبا و شیک، فقط کاش سایزبندی دقیق‌تر بود.'},{user:'مهسا',stars:5,comment:'برای هدیه گرفتم، خیلی خوشش اومد.'}] },
   { id:2, cat:'انگشتر', name:'انگشتر نقره سولیتر', notes:'نقره ۹۲۵ عیار، آبکاری رودیوم', price:980000, gem:'#c9ced4', stock:8, image:null,
@@ -701,13 +819,20 @@ async function loadProducts(){
   } catch(e){ console.warn(e); }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) { PRODUCTS = withDefaultProductImages(JSON.parse(raw)); return; }
+    if (raw) {
+      PRODUCTS = withDefaultProductImages(JSON.parse(raw));
+      await saveProducts();
+      return;
+    }
   } catch(e){}
   PRODUCTS = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
   await saveProducts();
 }
 function withDefaultProductImages(products){
   return products.map(product => {
+    if (product.image && product.image.startsWith('https://images.unsplash.com/photo-1611652022419-a9419f74343d')) {
+      return { ...product, image: null };
+    }
     if (product.image) return product;
     const fallback = DEFAULT_PRODUCTS.find(item => item.name === product.name);
     return fallback && fallback.image ? { ...product, image: fallback.image } : product;
@@ -819,6 +944,11 @@ async function refreshSharedState({ silent = false } = {}) {
       apiGet('/api/discounts').catch(() => null),
       apiGet('/api/payment').catch(() => null)
     ]);
+
+    if (![productsData, loyaltyData, discountsData, paymentData].some(Boolean)) {
+      if (!silent) showToast('ارتباط با سرور برقرار نیست');
+      return;
+    }
 
     if (productsData && Array.isArray(productsData.products)) {
       PRODUCTS = withDefaultProductImages(productsData.products);
@@ -940,6 +1070,9 @@ function renderChips(){
     const chip = document.createElement('div');
     chip.className = 'chip' + (cat === activeCat ? ' active' : '');
     chip.textContent = cat;
+    const categoryProduct = PRODUCTS.find(product => product.image && (cat === 'همه' || product.cat === cat));
+    const categoryImage = categoryProduct ? categoryProduct.image : DEFAULT_PRODUCT_IMAGE;
+    chip.style.backgroundImage = `linear-gradient(180deg, #17161500 25%, #171615bd 100%), url(${JSON.stringify(categoryImage)})`;
     chip.onclick = () => { activeCat = cat; renderChips(); renderProducts(); };
     el.appendChild(chip);
   });
@@ -949,11 +1082,16 @@ function renderChips(){
 function renderProducts(){
   const el = document.getElementById('product-list');
   el.innerHTML = '';
+  const hero = document.querySelector('.hero-banner');
+  const heroImage = PRODUCTS.find(product => product.image)?.image || DEFAULT_PRODUCT_IMAGE;
+  hero.style.backgroundImage = `linear-gradient(180deg, #15141200 25%, #151412bd 100%), url(${JSON.stringify(heroImage)})`;
   let list = PRODUCTS.filter(p => activeCat === 'همه' || p.cat === activeCat);
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     list = list.filter(p => p.name.toLowerCase().includes(q) || p.notes.toLowerCase().includes(q) || p.cat.includes(q));
   }
+  const productHeading = document.querySelector('#productHeading h2');
+  if (productHeading) productHeading.textContent = searchQuery ? 'نتایج جست‌وجو' : activeCat === 'همه' ? 'منتخب‌های گالری' : `محصولات ${activeCat}`;
   if (!list.length) {
     el.innerHTML = '<div class="empty-cart">محصولی با این مشخصات پیدا نشد</div>';
     return;
@@ -964,8 +1102,8 @@ function renderProducts(){
     const stockClass = stock <= 0 ? 'stock-out' : stock <= 3 ? 'stock-low' : 'stock-ok';
     const stockText = stock <= 0 ? 'ناموجود' : stock <= 3 ? 'موجودی کم' : '';
     const photoHtml = p.image
-      ? `<img class="real-img" src="${p.image}" alt="">`
-      : `<div class="ring"></div><div class="gem" style="background:${p.gem||'#c9ced4'}"></div>`;
+      ? `<img class="real-img" src="${p.image}" alt="${p.name}">`
+      : `<img class="real-img" src="${DEFAULT_PRODUCT_IMAGE}" alt="تصویر نمونهٔ زیورآلات"><span class="image-badge">تصویر نمونه</span>`;
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `
@@ -984,6 +1122,16 @@ function renderProducts(){
         </div>
       </div>
     `;
+    const productImage = card.querySelector('.real-img');
+    if (productImage) productImage.onerror = () => {
+      productImage.remove();
+      const placeholder = document.createElement('div');
+      const gem = document.createElement('div');
+      placeholder.className = 'ring';
+      gem.className = 'gem';
+      gem.style.background = p.gem || '#c9ced4';
+      card.querySelector('.photo').append(placeholder, gem);
+    };
     card.addEventListener('click', (e) => { openDetail(p.id); });
     el.appendChild(card);
     renderQtyControl(p.id, cartQtyForProduct(p.id));
@@ -1035,7 +1183,7 @@ function renderDetail(){
 
   el.innerHTML = `
     <div class="detail-photo" style="background:linear-gradient(135deg, ${(p.gem||'#c9ced4')}55, #00000040)">
-      ${p.image ? `<img class="real-img" src="${p.image}" alt="">` : `<div class="ring"></div><div class="gem" style="background:${p.gem||'#c9ced4'}"></div>`}
+      ${p.image ? `<img class="real-img" src="${p.image}" alt="${p.name}">` : `<img class="real-img" src="${DEFAULT_PRODUCT_IMAGE}" alt="تصویر نمونهٔ زیورآلات"><span class="image-badge">تصویر نمونه</span>`}
     </div>
     <div class="detail-body">
       <div class="detail-name">${p.name}</div>
@@ -2019,14 +2167,22 @@ function bindAdminEvents(){
   };
 }
 
-(function replaceBrandHeader(){
-  const brandCenter = document.querySelector('.brand-center');
-  if (!brandCenter) return;
-  const logo = brandCenter.querySelector('.logo-img');
-  if (!logo) return;
-  logo.alt = 'لوگوی گالری نقره محمودی';
-  brandCenter.replaceChildren(logo);
-})();
+document.getElementById('allCategoriesBtn').onclick = () => {
+  activeCat = 'همه';
+  renderChips();
+  renderProducts();
+};
+document.getElementById('showAllProducts').onclick = () => {
+  activeCat = 'همه';
+  searchQuery = '';
+  document.getElementById('searchInput').value = '';
+  renderChips();
+  renderProducts();
+};
+document.getElementById('navHome').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
+document.getElementById('navCollections').onclick = () => document.querySelector('.collection-section').scrollIntoView({ behavior:'smooth' });
+document.getElementById('navCart').onclick = () => document.getElementById('cartBar').click();
+document.getElementById('navShare').onclick = () => document.getElementById('shareBotBtn').click();
 
 /* ---------------- Init ---------------- */
 (async function initApp(){
@@ -2052,6 +2208,7 @@ function bindAdminEvents(){
 
   showToast('در حال بارگذاری از سرور...');
   try {
+    const serverAvailable = await apiGet('/api/health').then(data => data.ok === true).catch(() => false);
     await Promise.all([
       loadPaymentInfo(),
       loadProducts(),
@@ -2065,7 +2222,7 @@ function bindAdminEvents(){
     renderStoreStats();
     renderProducts();
     renderCartBar();
-    showToast('متصل به سرور');
+    showToast(serverAvailable ? 'متصل به سرور' : 'فروشگاه آماده است؛ سرور در دسترس نیست');
   } catch (err) {
     console.warn('init app failed', err);
     showToast('بارگذاری محلی انجام شد');
