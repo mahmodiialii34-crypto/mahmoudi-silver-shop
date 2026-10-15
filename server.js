@@ -4,8 +4,9 @@ const path = require('path');
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'mahmoudi2026';
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const STORE_FILE = path.join(DATA_DIR, 'store.json');
+const telegramNotificationsInFlight = new Map();
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -30,7 +31,9 @@ function readStore() {
 }
 
 function writeStore(store) {
-  fs.writeFileSync(STORE_FILE, JSON.stringify(store, null, 2), 'utf8');
+  const tempFile = `${STORE_FILE}.${process.pid}.tmp`;
+  fs.writeFileSync(tempFile, JSON.stringify(store, null, 2), 'utf8');
+  fs.renameSync(tempFile, STORE_FILE);
 }
 
 const app = express();
@@ -130,12 +133,139 @@ app.get('/api/orders', (_req, res) => {
   res.json({ ok: true, orders: readStore().orders || [] });
 });
 
-app.post('/api/orders', (req, res) => {
+function telegramOrderMessage(order) {
+  const items = (order.items || []).map(item =>
+    `- ${item.name}${item.size ? ` (${item.size})` : ''} × ${item.qty} — ${item.price} تومان`
+  );
+  return [
+    '🛍️ سفارش جدید از گالری نقره محمودی',
+    `کد سفارش: ${order.orderId}`,
+    `نام مشتری: ${order.address?.name || '—'}`,
+    `شماره تماس: ${order.address?.phone || '—'}`,
+    `شهر: ${order.address?.city || '—'}`,
+    `آدرس: ${order.address?.full || '—'}`,
+    `کد پستی: ${order.address?.postal || '—'}`,
+    `روش ارسال: ${order.shipping?.name || '—'}`,
+    `مبلغ نهایی: ${Number(order.total || 0).toLocaleString('fa-IR')} تومان`,
+    `۴ رقم آخر کارت: ${order.last4 || '—'}`,
+    'محصولات:',
+    ...items
+  ].join('\n').slice(0, 4000);
+}
+
+async function sendTelegramRequest(method, body, isForm = false) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const response = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
+    method: 'POST',
+    headers: isForm ? undefined : { 'Content-Type': 'application/json' },
+    body: isForm ? body : JSON.stringify(body),
+    signal: AbortSignal.timeout(15000)
+  });
+  const result = await response.json();
+  if (!response.ok || !result.ok) {
+    throw new Error(`Telegram ${method} failed: ${result.description || response.status}`);
+  }
+  return result;
+}
+
+async function notifyTelegram(order) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return false;
+
+  if (!order.telegramMessageSentAt) {
+    await sendTelegramRequest('sendMessage', {
+      chat_id: chatId,
+      text: telegramOrderMessage(order)
+    });
+    order.telegramMessageSentAt = new Date().toISOString();
+  }
+
+  if (!order.telegramReceiptSentAt && order.receiptImage) {
+    const match = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/.exec(order.receiptImage);
+    if (!match) throw new Error('Order receipt is not a supported image');
+    const mimeType = `image/${match[1]}`;
+    const form = new FormData();
+    form.append('chat_id', chatId);
+    form.append('caption', `رسید پرداخت سفارش ${order.orderId}`);
+    form.append('photo', new Blob([Buffer.from(match[2], 'base64')], { type: mimeType }), `receipt.${match[1]}`);
+    await sendTelegramRequest('sendPhoto', form, true);
+    order.telegramReceiptSentAt = new Date().toISOString();
+  }
+  return true;
+}
+
+function notifyTelegramOnce(order) {
+  const pending = telegramNotificationsInFlight.get(order.orderId);
+  if (pending) return pending;
+  const notification = notifyTelegram(order).finally(() => {
+    telegramNotificationsInFlight.delete(order.orderId);
+  });
+  telegramNotificationsInFlight.set(order.orderId, notification);
+  return notification;
+}
+
+function persistTelegramStatus(order) {
   const store = readStore();
-  const incoming = Array.isArray(req.body.orders) ? req.body.orders : (Array.isArray(req.body) ? req.body : [req.body]);
-  store.orders = incoming;
+  const savedOrder = (store.orders || []).find(item => item.orderId === order.orderId);
+  if (!savedOrder) return null;
+  for (const field of ['telegramMessageSentAt', 'telegramReceiptSentAt']) {
+    if (order[field]) savedOrder[field] = order[field];
+  }
   writeStore(store);
-  res.json({ ok: true, count: store.orders.length });
+  return savedOrder;
+}
+
+app.post('/api/orders', (req, res) => {
+  const incoming = req.body && (req.body.order || req.body);
+  if (!incoming || typeof incoming !== 'object' || Array.isArray(incoming) ||
+      typeof incoming.orderId !== 'string' || !incoming.orderId.trim()) {
+    return res.status(400).json({ ok: false, error: 'orderId is required' });
+  }
+  if (typeof incoming.receiptImage !== 'string' ||
+      !/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(incoming.receiptImage)) {
+    return res.status(400).json({ ok: false, error: 'receiptImage must be a supported image data URL' });
+  }
+
+  const store = readStore();
+  store.orders = Array.isArray(store.orders) ? store.orders : [];
+  const existingIndex = store.orders.findIndex(item => item.orderId === incoming.orderId);
+  let order;
+  if (existingIndex >= 0) {
+    order = { ...incoming, ...store.orders[existingIndex] };
+    store.orders[existingIndex] = order;
+  } else {
+    order = incoming;
+    store.orders.unshift(order);
+  }
+  store.orders = store.orders.slice(0, 50);
+  writeStore(store);
+
+  notifyTelegramOnce(order).then(telegramSent => {
+    const savedOrder = persistTelegramStatus(order) || order;
+    if (!telegramSent) {
+      return res.status(503).json({
+        ok: false,
+        saved: true,
+        telegramSent: false,
+        error: 'telegram_not_configured',
+        order: savedOrder
+      });
+    }
+    res.json({ ok: true, saved: true, telegramSent: true, order: savedOrder });
+  }).catch(error => {
+    console.error('Telegram order notification failed:', error.message);
+    const savedOrder = persistTelegramStatus(order) || order;
+    const configured = Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID);
+    if (res.headersSent) return;
+    res.status(configured ? 502 : 503).json({
+      ok: false,
+      saved: true,
+      telegramSent: false,
+      error: configured ? 'telegram_send_failed' : 'telegram_not_configured',
+      order: savedOrder
+    });
+  });
 });
 
 app.put('/api/orders', requireAdmin, (req, res) => {

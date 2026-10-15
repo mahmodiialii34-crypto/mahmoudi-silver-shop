@@ -274,7 +274,9 @@
   }
   .btn-primary{background:var(--silver); color:var(--graphite);}
   .btn-secondary{background:#ffffff10; color:var(--silver);}
-  .btn:disabled{opacity:.5;}
+  .btn-confirm{background:#18794e!important; color:#fff!important; border:1px solid #32a06b!important;}
+  .btn-confirm:disabled{background:#66736d!important; color:#fff!important; border-color:#66736d!important; opacity:1; cursor:not-allowed;}
+  .btn:disabled{opacity:.5; cursor:not-allowed;}
 
   .toast{
     position:fixed; top:14px; left:50%; transform:translateX(-50%) translateY(-140%);
@@ -711,10 +713,8 @@ if (tg) {
    2) CARD_INFO: شماره کارت واقعی برای واریز کارت‌به‌کارت (الان نمونه است)
    3) AI_BACKEND_URL: اگر بک‌اند هوش مصنوعی واقعی ساختی، آدرسش را اینجا بگذار
       و AI_DEMO_MODE را false کن. تا آن زمان پاسخ‌های آماده (FAQ) کار می‌کنند.
-   4) آپلود رسید: چون Telegram Mini App نمی‌تواند فایل بزرگ (عکس) را مستقیم
-      با sendData بفرستد (محدودیت حجم پیام)، این صفحه فقط سفارش و شماره
-      پیگیری را برای ربات می‌فرستد؛ از کاربر خواسته می‌شود عکس رسید را
-      به‌صورت پیام عادی برای ربات بفرستد (با ذکر همان شماره پیگیری).
+   4) ارسال سفارش و رسید: سرور برای ارسال امن به تلگرام به متغیرهای
+      TELEGRAM_BOT_TOKEN و TELEGRAM_CHAT_ID نیاز دارد؛ توکن در مرورگر قرار نمی‌گیرد.
 ================================================================= */
 const BOT_LINK = 'https://t.me/mahmoudisilvershop_bot';
 // اطلاعات پرداخت (قابل ویرایش از پنل مدیریت → تنظیمات)
@@ -796,7 +796,7 @@ const AI_FAQ = [
   { keys:['عیار','اصالت','نقره'], answer:'تمام محصولات گالری از نقره ۹۲۵ عیار (استرلینگ) ساخته شده‌اند و همراه با مهر عیار ارسال می‌شوند.' },
   { keys:['مرجوع','گارانتی','پس دادن'], answer:'تا ۷ روز پس از دریافت، در صورت سالم بودن کالا امکان مرجوعی وجود دارد.' },
   { keys:['سایز','اندازه'], answer:'برای انگشترها سایز استاندارد ایرانی (۴۹ تا ۵۷) موجود است؛ اگر مطمئن نیستید، سایز میانی معمولاً مناسب اکثر افراد است.' },
-  { keys:['پرداخت','کارت به کارت','واریز'], answer:'در حال حاضر پرداخت از طریق کارت‌به‌کارت انجام می‌شود؛ بعد از واریز، رسید را برای ربات ارسال کنید تا سفارش تایید شود.' },
+  { keys:['پرداخت','کارت به کارت','واریز'], answer:'در حال حاضر پرداخت از طریق کارت‌به‌کارت انجام می‌شود؛ پس از واریز، تصویر رسید را در مرحلهٔ ثبت سفارش بارگذاری کنید.' },
 ];
 
 let activeCat = 'همه';
@@ -947,22 +947,22 @@ async function loadOrders(){
     if (raw) recentOrders = JSON.parse(raw);
   } catch(e){}
 }
-async function saveOrdersToServer(){
-  try {
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(recentOrders));
-  } catch(e){}
-
-  try {
-    const res = await fetch(API_BASE + '/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orders: recentOrders })
-    });
-
-    if (!res.ok) throw new Error('save orders failed:' + res.status);
-  } catch (e) {
-    console.warn('saveOrdersToServer failed', e);
+async function saveOrdersToServer(order){
+  const localOrders = [order, ...recentOrders]
+    .filter((item, index, orders) => orders.findIndex(candidate => candidate.orderId === item.orderId) === index)
+    .slice(0, 50)
+    .map(({ receiptImage, ...savedOrder }) => savedOrder);
+  const res = await fetch(API_BASE + '/api/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ order })
+  });
+  const result = await res.json();
+  if (!res.ok && !result.saved) throw new Error(result.error || `save order failed: ${res.status}`);
+  if (result.saved) {
+    try { localStorage.setItem(ORDERS_KEY, JSON.stringify(localOrders)); } catch(e){}
   }
+  return result;
 }
 async function loadPaymentInfo(){
   try {
@@ -1032,6 +1032,9 @@ let selectedShipping = null;
 let last4 = '';
 let receiptDataUrl = null;
 let lastOrderId = null;
+let lastTelegramSent = false;
+let pendingOrderSubmission = null;
+let submittingOrder = false;
 let discounts = []; // {code, percent?, amount?, active, note}
 let appliedDiscount = null;
 let recentOrders = []; // stored locally for admin view
@@ -1448,11 +1451,11 @@ function stepConfirmHtml(){
         <div style="font-size:12.5px;color:var(--silver-dim)">شماره پیگیری سفارش شما</div>
         <div class="oid">${lastOrderId}</div>
         <div style="font-size:11.5px;color:var(--silver-dim); line-height:2;">
-          سفارش ثبت شد. اطلاعات سفارش را به ربات بفرستید و سپس تصویر رسید را در همان گفتگو همراه کد پیگیری <b>${lastOrderId}</b> ارسال کنید.<br>
+          ${lastTelegramSent ? 'اطلاعات سفارش و تصویر رسید برای مدیر فروشگاه ارسال شد.' : 'سفارش ذخیره شد، اما ارسال به تلگرام ناموفق بود؛ لطفاً با پشتیبانی تماس بگیرید.'}<br>
+          کد پیگیری شما: <b>${lastOrderId}</b><br>
           🎁 با این خرید <b style="color:var(--gold)">${faDigits(Math.round(rewardForOrder()/1000))}</b> امتیاز به حساب وفاداری شما اضافه می‌شود.
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-primary" id="sendOrderToBotBtn">ارسال اطلاعات به ربات</button></div>
       <div class="nav-row"><button class="btn btn-primary" id="closeAfterOrderBtn">بازگشت به فروشگاه</button></div>`;
   }
   const { count, total } = cartSummary();
@@ -1465,12 +1468,12 @@ function stepConfirmHtml(){
     <div class="drawer-total"><span>مبلغ نهایی</span><span>${formatPrice(grandTotal())} تومان</span></div>
     <div class="receipt-upload" style="border-color:${receiptDataUrl ? 'var(--good)' : '#d7dbe040'}">
       ${receiptDataUrl ? '✓ رسید انتخاب شد — برای تغییر دوباره لمس کنید' : '📎 بارگذاری تصویر رسید واریزی <b style="color:var(--gold)">(اجباری)</b>'}
-      <input type="file" accept="image/*" id="receiptInput" capture="environment">
+      <input type="file" accept="image/*" id="receiptInput">
       <img id="receiptPreview" class="receipt-preview" style="display:${receiptDataUrl ? 'block' : 'none'}" ${receiptDataUrl ? `src="${receiptDataUrl}"` : ''}>
     </div>
     <div class="nav-row">
       <button class="btn btn-secondary" id="backToPayBtn">بازگشت</button>
-      <button class="btn btn-primary" id="finalSubmitBtn" ${receiptDataUrl ? '' : 'disabled'}>ثبت نهایی سفارش</button>
+      <button class="btn btn-confirm" id="finalSubmitBtn" ${receiptDataUrl ? '' : 'disabled'}>ثبت نهایی سفارش</button>
     </div>`;
 }
 
@@ -1543,36 +1546,31 @@ function bindStepEvents(){
   }
   if (checkoutStep === 4) {
     if (lastOrderId) {
-      const sendOrderBtn = document.getElementById('sendOrderToBotBtn');
-      if (sendOrderBtn) sendOrderBtn.onclick = () => {
-        if (tg && pendingTelegramPayload) {
-          tg.sendData(JSON.stringify(pendingTelegramPayload));
-          return;
-        }
-        window.open(BOT_LINK, '_blank', 'noopener');
-      };
       const closeBtn = document.getElementById('closeAfterOrderBtn');
       if (closeBtn) closeBtn.onclick = () => {
-        cart = {}; selectedShipping = null; last4 = ''; lastOrderId = null; receiptDataUrl = null; appliedDiscount = null; pendingTelegramPayload = null;
+        cart = {}; selectedShipping = null; last4 = ''; lastOrderId = null; lastTelegramSent = false;
+        receiptDataUrl = null; appliedDiscount = null; pendingOrderSubmission = null;
         closeDrawer(); renderProducts(); renderCartBar();
       };
       return;
     }
-    document.getElementById('backToPayBtn').onclick = () => goToStep(3);
+    document.getElementById('backToPayBtn').onclick = () => {
+      pendingOrderSubmission = null;
+      goToStep(3);
+    };
     const fileInput = document.getElementById('receiptInput');
     fileInput.onchange = () => {
       const file = fileInput.files[0];
       if (!file) return;
+      pendingOrderSubmission = null;
       if (file.size > 8 * 1024 * 1024) { showToast('حجم عکس نباید بیشتر از ۸ مگابایت باشد'); return; }
       const reader = new FileReader();
       reader.onload = e => {
-        // فشرده‌سازی سبک برای کاهش حجم
         compressImage(e.target.result, 0.7, 1200).then(compressed => {
           receiptDataUrl = compressed;
           renderDrawerStep();
         }).catch(() => {
-          receiptDataUrl = e.target.result;
-          renderDrawerStep();
+          showToast('پردازش تصویر رسید ناموفق بود؛ لطفاً تصویر دیگری انتخاب کنید');
         });
       };
       reader.readAsDataURL(file);
@@ -1581,105 +1579,76 @@ function bindStepEvents(){
   }
 }
 
-function submitOrder(){
+async function submitOrder(){
   if (!receiptDataUrl) {
     showToast('بارگذاری تصویر رسید الزامی است');
     return;
   }
-  const orderId = genOrderId();
-  lastOrderId = orderId;
-  const lines = cartLines().map(l => ({ id:l.p.id, name:l.p.name, size:l.size, qty:l.qty, price:l.p.price }));
-  // کاهش موجودی
-  lines.forEach(line => {
-    const p = PRODUCTS.find(x => x.id === line.id);
-    if (p && p.stock != null) {
-      p.stock = Math.max(0, p.stock - line.qty);
+  if (submittingOrder) return;
+  if (!pendingOrderSubmission) {
+    const orderId = genOrderId();
+    const lines = cartLines().map(l => ({ id:l.p.id, name:l.p.name, size:l.size, qty:l.qty, price:l.p.price }));
+    pendingOrderSubmission = {
+      type: 'new_order',
+      orderId,
+      address: { ...address },
+      shipping: selectedShipping,
+      last4,
+      discount: appliedDiscount ? { code: appliedDiscount.code, amount: discountAmount() } : null,
+      items: lines,
+      subtotal: cartSummary().total,
+      shippingCost: shippingCost(),
+      discountAmount: discountAmount(),
+      total: grandTotal(),
+      hasReceipt: true,
+      receiptImage: receiptDataUrl,
+      telegramUser: (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null,
+      createdAt: new Date().toISOString()
+    };
+  }
+
+  submittingOrder = true;
+  const submitButton = document.getElementById('finalSubmitBtn');
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'در حال ثبت و ارسال…';
+  }
+  let result;
+  try {
+    result = await saveOrdersToServer(pendingOrderSubmission);
+  } catch (e) {
+    console.warn('order submission failed', e);
+    showToast('ثبت سفارش انجام نشد؛ اتصال اینترنت را بررسی و دوباره تلاش کنید');
+    submittingOrder = false;
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = 'تلاش دوباره برای ثبت سفارش';
     }
+    return;
+  }
+
+  const order = result.order || pendingOrderSubmission;
+  lastOrderId = order.orderId;
+  lastTelegramSent = result.telegramSent === true;
+  recentOrders = [order, ...recentOrders.filter(item => item.orderId !== order.orderId)].slice(0, 50);
+  order.items.forEach(line => {
+    const product = PRODUCTS.find(item => item.id === line.id);
+    if (product && product.stock != null) product.stock = Math.max(0, product.stock - line.qty);
   });
-  saveProducts();
+  await saveProducts();
   renderProducts();
 
-  const payload = {
-    type: 'new_order',
-    orderId,
-    address,
-    shipping: selectedShipping,
-    last4,
-    discount: appliedDiscount ? { code: appliedDiscount.code, amount: discountAmount() } : null,
-    items: lines,
-    subtotal: cartSummary().total,
-    shippingCost: shippingCost(),
-    discountAmount: discountAmount(),
-    total: grandTotal(),
-    hasReceipt: true,
-    telegramUser: (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null,
-    createdAt: new Date().toISOString()
-  };
-
-  // ذخیره سفارش برای مشاهده در پنل ادمین و همگام‌سازی روی سرور برای همه کاربران
-  recentOrders.unshift({
-    ...payload,
-    receiptPreview: receiptDataUrl ? receiptDataUrl.substring(0, 12000) : null,
-    receiptThumb: receiptDataUrl ? receiptDataUrl.substring(0, 80) + '…' : null
-  });
-  if (recentOrders.length > 50) recentOrders = recentOrders.slice(0, 50);
-  try { localStorage.setItem(ORDERS_KEY, JSON.stringify(recentOrders)); } catch(e){}
-  saveOrdersToServer().catch(() => {});
-
-  // امتیاز وفاداری
   const pts = Math.round(rewardForOrder() / 1000);
   loyaltyPoints += pts;
   document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
-  saveLoyalty();
+  await saveLoyalty();
 
-  // ارسال حرفه‌ای به ربات تلگرام: خلاصه سفارش + اطلاعات مشتری + تصویر رسید فشرده‌شده
-  if (tg) {
-    tg.HapticFeedback && tg.HapticFeedback.notificationOccurred('success');
-    try {
-      const itemsText = lines.map(item => `- ${item.name}${item.size ? ` (${item.size})` : ''} × ${item.qty} = ${formatPrice(item.price * item.qty)} تومان`).join('\n');
-      const orderSummary = [
-        '🛍️ سفارش جدید از فروشگاه گالری نقره محمودی',
-        `کد سفارش: ${orderId}`,
-        `نام مشتری: ${address.name}`,
-        `شماره تماس: ${address.phone}`,
-        `شهر: ${address.city}`,
-        `آدرس: ${address.full}`,
-        `روش ارسال: ${selectedShipping ? selectedShipping.name : 'نامشخص'}`,
-        `تخفیف: ${appliedDiscount ? `${appliedDiscount.code} (${formatPrice(discountAmount())} تومان)` : 'بدون تخفیف'}`,
-        `جمع سفارش: ${formatPrice(cartSummary().total)} تومان`,
-        `هزینه ارسال: ${formatPrice(shippingCost())} تومان`,
-        `مبلغ نهایی: ${formatPrice(grandTotal())} تومان`,
-        'محصولات:',
-        itemsText,
-        `شماره کارت آخر: ${last4 || '—'}`,
-        `تاریخ: ${new Date().toLocaleString('fa-IR')}`
-      ].join('\n');
-
-      const telegramPayload = {
-        type: 'new_order',
-        orderId,
-        customerName: address.name,
-        customerPhone: address.phone,
-        customerCity: address.city,
-        customerAddress: address.full,
-        postalCode: address.postal || '',
-        shippingMethod: selectedShipping ? selectedShipping.name : null,
-        subtotal: cartSummary().total,
-        shippingCost: shippingCost(),
-        discountAmount: discountAmount(),
-        total: grandTotal(),
-        items: lines,
-        last4,
-        telegramMessage: orderSummary,
-        createdAt: new Date().toISOString()
-      };
-
-      pendingTelegramPayload = telegramPayload;
-    } catch(e) {
-      console.warn('sendData failed', e);
-    }
-  }
+  if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
   renderDrawerStep();
+  if (!lastTelegramSent) {
+    showToast('سفارش ذخیره شد؛ ارسال تلگرام انجام نشد و باید تنظیمات ربات بررسی شود');
+  }
+  submittingOrder = false;
 }
 
 /* ---------------- Telegram MainButton ---------------- */
@@ -1787,6 +1756,11 @@ document.getElementById('adminTabs').onclick = (e) => {
   editingProductId = null;
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === adminTab));
   renderAdminBody();
+  if (adminTab === 'orders') {
+    loadOrders().then(() => {
+      if (adminTab === 'orders') renderAdminBody();
+    });
+  }
 };
 
 function renderAdminBody(){
@@ -1843,7 +1817,7 @@ function adminDiscountsHtml(){
 
 function adminOrdersHtml(){
   if (!recentOrders.length) {
-    return `<div class="empty-cart">هنوز سفارشی در این دستگاه ثبت نشده است.<br><span style="font-size:11px">سفارش‌ها پس از ثبت نهایی اینجا نمایش داده می‌شوند (ذخیره محلی).</span></div>`;
+    return `<div class="empty-cart">هنوز سفارشی ثبت نشده است.</div>`;
   }
   return recentOrders.map(o => `
     <div class="admin-card" style="flex-direction:column;align-items:stretch;gap:6px">
@@ -1854,6 +1828,7 @@ function adminOrdersHtml(){
       <div class="ameta">${o.address?.name || '—'} · ${o.address?.phone || ''}</div>
       <div class="ameta">${(o.items||[]).map(i => i.name + (i.size?' '+i.size:'') + ' ×'+i.qty).join(' | ')}</div>
       <div class="ameta">۴ رقم آخر: ${o.last4 || '—'} · ارسال: ${o.shipping?.name || '—'}</div>
+      ${o.receiptImage ? `<img src="${o.receiptImage}" alt="رسید پرداخت ${o.orderId}" style="display:block;max-width:100%;max-height:220px;object-fit:contain;border-radius:10px;margin-top:6px">` : '<div class="ameta">تصویر رسید موجود نیست.</div>'}
       ${o.discount ? `<div class="ameta" style="color:var(--good)">تخفیف: ${o.discount.code} (−${formatPrice(o.discount.amount||0)})</div>` : ''}
       <div class="ameta" style="font-size:10px;color:var(--silver-dim)">${o.createdAt ? new Date(o.createdAt).toLocaleString('fa-IR') : ''}</div>
     </div>`).join('');
@@ -1863,7 +1838,7 @@ function adminSettingsHtml(){
   return `
     <div style="position:sticky;top:0;z-index:10;margin:-14px -16px 16px;padding:12px 16px;background:#171615;border-bottom:1px solid #ffffff24;box-shadow:0 8px 22px #0006">
       <div id="heroBackgroundStatus" role="status" style="font-size:12px;color:var(--silver-dim);margin:0 0 8px">${BRANDING.heroBackground ? 'برای جایگزینی، تصویر تازه انتخاب کنید و سپس دکمه را بزنید.' : 'پس از انتخاب تصویر، دکمهٔ تأیید را بزنید تا برای همه بارگذاری شود.'}</div>
-      <button class="btn btn-primary" id="saveHeroBackgroundBtn" style="display:block;width:100%;min-height:52px;margin:0;font-size:15px;font-weight:700" disabled>تأیید و بارگذاری تصویر برای همه</button>
+      <button class="btn btn-confirm" id="saveHeroBackgroundBtn" style="display:block;width:100%;min-height:52px;margin:0;font-size:15px;font-weight:700" disabled>تأیید و بارگذاری تصویر برای همه</button>
     </div>
     <div class="form-block">
       <label>لوگوی فروشگاه (برای نمایش به همهٔ بازدیدکنندگان)</label>
@@ -1889,8 +1864,8 @@ function adminSettingsHtml(){
       <button class="btn btn-primary" id="savePaymentBtn" style="width:100%;margin-top:8px">ذخیره اطلاعات پرداخت</button>
     </div>
     <div style="margin-top:20px;padding:12px;background:#ffffff08;border-radius:12px;font-size:11.5px;color:var(--silver-dim);line-height:1.8">
-      <b style="color:var(--chrome)">نکته مهم درباره رسید:</b><br>
-      بعد از ثبت سفارش، اطلاعات کامل مشتری و شماره تماس به همراه جزئیات خرید و پیش‌نمایش رسید به ربات تلگرام ارسال می‌شود. در صورت نیاز، این داده‌ها در بات شما قابل ثبت و فوروارد به ادمین هستند.
+      <b style="color:var(--chrome)">ارسال سفارش و رسید:</b><br>
+      پس از ثبت نهایی، جزئیات سفارش و تصویر رسید به چت تلگرام تنظیم‌شده برای مدیر ارسال و در سرور ذخیره می‌شود.
     </div>`;
 }
 
