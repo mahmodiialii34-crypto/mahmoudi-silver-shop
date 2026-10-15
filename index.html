@@ -407,6 +407,7 @@
   }
   .admin-form textarea{resize:vertical; min-height:60px;}
   .settings-logo-preview{width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--silver);background:var(--graphite);}
+  .settings-logo-preview{width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--silver);background:var(--graphite);}
   .admin-form .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .img-preview-box{
     width:100%; height:120px; border-radius:12px; border:1.5px dashed #d7dbe040;
@@ -858,7 +859,7 @@ async function loadBranding(){
     if (data.branding) {
       BRANDING = { ...BRANDING, ...data.branding };
       try { localStorage.setItem(BRANDING_KEY, JSON.stringify(BRANDING)); } catch(e){}
-      applyStoreLogo();
+      applyStoreBranding();
       return;
     }
   } catch(e) { console.warn('load branding failed', e); }
@@ -866,7 +867,7 @@ async function loadBranding(){
     const raw = localStorage.getItem(BRANDING_KEY);
     if (raw) BRANDING = { ...BRANDING, ...JSON.parse(raw) };
   } catch(e) { console.warn('load cached branding failed', e); }
-  applyStoreLogo();
+  applyStoreBranding();
 }
 function applyStoreLogo(){
   document.querySelectorAll('.logo-img').forEach(img => {
@@ -875,11 +876,15 @@ function applyStoreLogo(){
     img.src = BRANDING.logo || 'brand-logo.jpg';
   });
 }
-async function saveBranding(logo){
-  const data = await apiPut('/api/branding', { logo });
+function applyStoreBranding(){
+  applyStoreLogo();
+  renderHeroBackground();
+}
+async function saveBranding(changes){
+  const data = await apiPut('/api/branding', { branding: changes });
   BRANDING = { ...BRANDING, ...data.branding };
   try { localStorage.setItem(BRANDING_KEY, JSON.stringify(BRANDING)); } catch(e){}
-  applyStoreLogo();
+  applyStoreBranding();
 }
 async function loadLoyalty(){
   try {
@@ -1006,7 +1011,7 @@ async function refreshSharedState({ silent = false } = {}) {
     }
     if (brandingData && brandingData.branding) {
       BRANDING = { ...BRANDING, ...brandingData.branding };
-      applyStoreLogo();
+      applyStoreBranding();
     }
 
     renderProducts();
@@ -1124,9 +1129,7 @@ function renderChips(){
 function renderProducts(){
   const el = document.getElementById('product-list');
   el.innerHTML = '';
-  const hero = document.querySelector('.hero-banner');
-  const heroImage = PRODUCTS.find(product => product.image)?.image || DEFAULT_PRODUCT_IMAGE;
-  hero.style.backgroundImage = `linear-gradient(180deg, #15141200 25%, #151412bd 100%), url(${JSON.stringify(heroImage)})`;
+  renderHeroBackground();
   let list = PRODUCTS.filter(p => activeCat === 'همه' || p.cat === activeCat);
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
@@ -1178,6 +1181,13 @@ function renderProducts(){
     el.appendChild(card);
     renderQtyControl(p.id, cartQtyForProduct(p.id));
   });
+}
+
+function renderHeroBackground(){
+  const hero = document.querySelector('.hero-banner');
+  if (!hero) return;
+  const heroImage = BRANDING.heroBackground || PRODUCTS.find(product => product.image)?.image || DEFAULT_PRODUCT_IMAGE;
+  hero.style.backgroundImage = `linear-gradient(180deg, #15141200 25%, #151412bd 100%), url(${JSON.stringify(heroImage)})`;
 }
 
 function cartQtyForProduct(id){
@@ -1860,6 +1870,13 @@ function adminSettingsHtml(){
       <button class="btn btn-primary" id="saveLogoBtn" style="width:100%">ذخیره لوگو برای همه</button>
       ${BRANDING.logo ? '<button class="btn btn-secondary" id="removeLogoBtn" style="width:100%;margin-top:8px">بازگشت به لوگوی پیش‌فرض</button>' : ''}
     </div>
+    <div class="form-block" style="margin-top:16px">
+      <label>تصویر پس‌زمینهٔ اصلی فروشگاه</label>
+      <img id="heroBackgroundPreview" src="${BRANDING.heroBackground || PRODUCTS.find(product => product.image)?.image || DEFAULT_PRODUCT_IMAGE}" alt="پیش‌نمایش پس‌زمینهٔ اصلی" style="display:block;width:100%;height:120px;object-fit:cover;border-radius:10px;margin:10px 0">
+      <input id="heroBackgroundInput" type="file" accept="image/*" aria-label="انتخاب تصویر پس‌زمینهٔ اصلی">
+      <button class="btn btn-primary" id="saveHeroBackgroundBtn" style="width:100%;margin-top:8px">ذخیرهٔ پس‌زمینه برای همه</button>
+      ${BRANDING.heroBackground ? '<button class="btn btn-secondary" id="removeHeroBackgroundBtn" style="width:100%;margin-top:8px">بازگشت به تصویر خودکار محصولات</button>' : ''}
+    </div>
     <div style="margin-bottom:12px;font-size:12.5px;color:var(--silver-dim)">اطلاعات پرداخت (نمایش به مشتری در مرحله کارت‌به‌کارت)</div>
     <div class="form-block">
       <label>نام صاحب حساب</label><input id="setOwner" value="${CARD_INFO.owner || ''}">
@@ -2246,7 +2263,7 @@ function bindAdminEvents(){
     }
     saveLogo.disabled = true;
     try {
-      await saveBranding(logo);
+      await saveBranding({ logo });
       showToast('لوگو برای همه ذخیره شد');
       renderAdminBody();
     } catch(e) {
@@ -2260,7 +2277,7 @@ function bindAdminEvents(){
   if (removeLogo) removeLogo.onclick = async () => {
     removeLogo.disabled = true;
     try {
-      await saveBranding(null);
+      await saveBranding({ logo: null });
       showToast('لوگوی پیش‌فرض برای همه فعال شد');
       renderAdminBody();
     } catch(e) {
@@ -2268,6 +2285,69 @@ function bindAdminEvents(){
       showToast('تغییر لوگو ناموفق بود؛ اتصال سرور را بررسی کنید');
     } finally {
       removeLogo.disabled = false;
+    }
+  };
+  const heroBackgroundInput = document.getElementById('heroBackgroundInput');
+  if (heroBackgroundInput) heroBackgroundInput.onchange = () => {
+    const file = heroBackgroundInput.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('لطفاً یک فایل تصویری انتخاب کنید');
+      heroBackgroundInput.value = '';
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      showToast('حجم تصویر پس‌زمینه باید کمتر از ۸ مگابایت باشد');
+      heroBackgroundInput.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = async event => {
+      try {
+        const compressed = await compressImage(event.target.result, 0.78, 1600);
+        const preview = document.getElementById('heroBackgroundPreview');
+        preview.src = compressed;
+        preview.dataset.tempImage = compressed;
+      } catch(e) {
+        console.warn('hero background compression failed', e);
+        showToast('پردازش تصویر پس‌زمینه ناموفق بود');
+      }
+    };
+    reader.onerror = () => showToast('خواندن فایل پس‌زمینه ناموفق بود');
+    reader.readAsDataURL(file);
+  };
+  const saveHeroBackground = document.getElementById('saveHeroBackgroundBtn');
+  if (saveHeroBackground) saveHeroBackground.onclick = async () => {
+    const preview = document.getElementById('heroBackgroundPreview');
+    const heroBackground = preview.dataset.tempImage || BRANDING.heroBackground;
+    if (!heroBackground) {
+      showToast('ابتدا یک تصویر پس‌زمینه انتخاب کنید');
+      return;
+    }
+    saveHeroBackground.disabled = true;
+    try {
+      await saveBranding({ heroBackground });
+      showToast('پس‌زمینه برای همه ذخیره شد');
+      renderAdminBody();
+    } catch(e) {
+      console.warn('save hero background failed', e);
+      showToast('ذخیرهٔ پس‌زمینه ناموفق بود؛ اتصال سرور را بررسی کنید');
+    } finally {
+      saveHeroBackground.disabled = false;
+    }
+  };
+  const removeHeroBackground = document.getElementById('removeHeroBackgroundBtn');
+  if (removeHeroBackground) removeHeroBackground.onclick = async () => {
+    removeHeroBackground.disabled = true;
+    try {
+      await saveBranding({ heroBackground: null });
+      showToast('پس‌زمینهٔ خودکار محصولات فعال شد');
+      renderAdminBody();
+    } catch(e) {
+      console.warn('reset hero background failed', e);
+      showToast('بازگردانی پس‌زمینه ناموفق بود؛ اتصال سرور را بررسی کنید');
+    } finally {
+      removeHeroBackground.disabled = false;
     }
   };
   const savePay = document.getElementById('savePaymentBtn');
