@@ -7,6 +7,8 @@ const ADMIN_SECRET = process.env.ADMIN_SECRET || 'mahmoudi2026';
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const STORE_FILE = path.join(DATA_DIR, 'store.json');
 const telegramNotificationsInFlight = new Map();
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || process.env.ADMIN_ID;
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -129,7 +131,7 @@ app.put('/api/discounts', requireAdmin, (req, res) => {
   res.json({ ok: true });
 });
 
-app.get('/api/orders', (_req, res) => {
+app.get('/api/orders', requireAdmin, (_req, res) => {
   res.json({ ok: true, orders: readStore().orders || [] });
 });
 
@@ -154,8 +156,7 @@ function telegramOrderMessage(order) {
 }
 
 async function sendTelegramRequest(method, body, isForm = false) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const response = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
+  const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/${method}`, {
     method: 'POST',
     headers: isForm ? undefined : { 'Content-Type': 'application/json' },
     body: isForm ? body : JSON.stringify(body),
@@ -169,13 +170,11 @@ async function sendTelegramRequest(method, body, isForm = false) {
 }
 
 async function notifyTelegram(order) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) return false;
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return false;
 
   if (!order.telegramMessageSentAt) {
     await sendTelegramRequest('sendMessage', {
-      chat_id: chatId,
+      chat_id: TELEGRAM_CHAT_ID,
       text: telegramOrderMessage(order)
     });
     order.telegramMessageSentAt = new Date().toISOString();
@@ -186,7 +185,7 @@ async function notifyTelegram(order) {
     if (!match) throw new Error('Order receipt is not a supported image');
     const mimeType = `image/${match[1]}`;
     const form = new FormData();
-    form.append('chat_id', chatId);
+    form.append('chat_id', TELEGRAM_CHAT_ID);
     form.append('caption', `رسید پرداخت سفارش ${order.orderId}`);
     form.append('photo', new Blob([Buffer.from(match[2], 'base64')], { type: mimeType }), `receipt.${match[1]}`);
     await sendTelegramRequest('sendPhoto', form, true);
@@ -256,7 +255,7 @@ app.post('/api/orders', (req, res) => {
   }).catch(error => {
     console.error('Telegram order notification failed:', error.message);
     const savedOrder = persistTelegramStatus(order) || order;
-    const configured = Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID);
+    const configured = Boolean(TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID);
     if (res.headersSent) return;
     res.status(configured ? 502 : 503).json({
       ok: false,

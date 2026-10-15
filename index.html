@@ -741,8 +741,8 @@ const ADMIN_SECRET = 'mahmoudi2026';
 const STORAGE_KEY = 'mahmoudi_products_v3';
 const BRANDING_KEY = 'mahmoudi_branding_v1';
 
-async function apiGet(path){
-  const res = await fetch(API_BASE + path);
+async function apiGet(path, options = {}){
+  const res = await fetch(API_BASE + path, options);
   if (!res.ok) throw new Error('GET ' + path + ' ' + res.status);
   return res.json();
 }
@@ -934,8 +934,9 @@ async function saveDiscounts(){
   try { await apiPut('/api/discounts', { discounts }); } catch(e){}
 }
 async function loadOrders(){
+  if (!isAdmin) return;
   try {
-    const data = await apiGet('/api/orders');
+    const data = await apiGet('/api/orders', { headers: { 'X-Admin-Key': ADMIN_SECRET } });
     if (Array.isArray(data.orders)) {
       recentOrders = data.orders;
       return;
@@ -2401,7 +2402,7 @@ document.getElementById('navShare').onclick = () => document.getElementById('sha
       loadDiscounts(),
       loadBranding()
     ]);
-    loadOrders();
+    if (isAdmin) await loadOrders();
     document.getElementById('loyaltyPoints').textContent = faDigits(loyaltyPoints);
     initFaqs();
     renderChips();
