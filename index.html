@@ -1873,8 +1873,9 @@ function adminSettingsHtml(){
     <div class="form-block" style="margin-top:16px">
       <label>تصویر پس‌زمینهٔ اصلی فروشگاه</label>
       <img id="heroBackgroundPreview" src="${BRANDING.heroBackground || PRODUCTS.find(product => product.image)?.image || DEFAULT_PRODUCT_IMAGE}" alt="پیش‌نمایش پس‌زمینهٔ اصلی" style="display:block;width:100%;height:120px;object-fit:cover;border-radius:10px;margin:10px 0">
+      <div id="heroBackgroundStatus" role="status" style="font-size:12px;color:var(--silver-dim);margin:8px 0">${BRANDING.heroBackground ? 'پس‌زمینهٔ فعلی برای همه فعال است؛ برای جایگزینی، تصویر تازه انتخاب کنید.' : 'برای بارگذاری، ابتدا تصویر را انتخاب کنید.'}</div>
       <input id="heroBackgroundInput" type="file" accept="image/*" aria-label="انتخاب تصویر پس‌زمینهٔ اصلی">
-      <button class="btn btn-primary" id="saveHeroBackgroundBtn" style="width:100%;margin-top:8px">ذخیرهٔ پس‌زمینه برای همه</button>
+      <button class="btn btn-primary" id="saveHeroBackgroundBtn" style="width:100%;min-height:48px;margin-top:10px;font-size:15px;font-weight:700" disabled>تأیید و بارگذاری تصویر برای همه</button>
       ${BRANDING.heroBackground ? '<button class="btn btn-secondary" id="removeHeroBackgroundBtn" style="width:100%;margin-top:8px">بازگشت به تصویر خودکار محصولات</button>' : ''}
     </div>
     <div style="margin-bottom:12px;font-size:12.5px;color:var(--silver-dim)">اطلاعات پرداخت (نمایش به مشتری در مرحله کارت‌به‌کارت)</div>
@@ -2291,47 +2292,62 @@ function bindAdminEvents(){
   if (heroBackgroundInput) heroBackgroundInput.onchange = () => {
     const file = heroBackgroundInput.files[0];
     if (!file) return;
+    const preview = document.getElementById('heroBackgroundPreview');
+    const saveButton = document.getElementById('saveHeroBackgroundBtn');
+    const status = document.getElementById('heroBackgroundStatus');
+    delete preview.dataset.tempImage;
+    saveButton.disabled = true;
     if (!file.type.startsWith('image/')) {
       showToast('لطفاً یک فایل تصویری انتخاب کنید');
       heroBackgroundInput.value = '';
+      status.textContent = 'این فایل تصویر نیست؛ لطفاً یک تصویر انتخاب کنید.';
       return;
     }
     if (file.size > 8 * 1024 * 1024) {
       showToast('حجم تصویر پس‌زمینه باید کمتر از ۸ مگابایت باشد');
       heroBackgroundInput.value = '';
+      status.textContent = 'حجم تصویر بیش از ۸ مگابایت است؛ تصویر کوچک‌تری انتخاب کنید.';
       return;
     }
+    status.textContent = 'تصویر در حال آماده‌سازی است…';
     const reader = new FileReader();
     reader.onload = async event => {
       try {
         const compressed = await compressImage(event.target.result, 0.78, 1600);
-        const preview = document.getElementById('heroBackgroundPreview');
         preview.src = compressed;
         preview.dataset.tempImage = compressed;
+        status.textContent = 'پیش‌نمایش آماده است. برای اعمال تغییر برای همه، دکمهٔ تأیید را بزنید.';
+        saveButton.disabled = false;
       } catch(e) {
         console.warn('hero background compression failed', e);
         showToast('پردازش تصویر پس‌زمینه ناموفق بود');
+        status.textContent = 'آماده‌سازی تصویر ناموفق بود؛ لطفاً تصویر دیگری انتخاب کنید.';
       }
     };
-    reader.onerror = () => showToast('خواندن فایل پس‌زمینه ناموفق بود');
+    reader.onerror = () => {
+      showToast('خواندن فایل پس‌زمینه ناموفق بود');
+      status.textContent = 'خواندن تصویر ناموفق بود؛ لطفاً دوباره تلاش کنید.';
+    };
     reader.readAsDataURL(file);
   };
   const saveHeroBackground = document.getElementById('saveHeroBackgroundBtn');
   if (saveHeroBackground) saveHeroBackground.onclick = async () => {
     const preview = document.getElementById('heroBackgroundPreview');
-    const heroBackground = preview.dataset.tempImage || BRANDING.heroBackground;
+    const heroBackground = preview.dataset.tempImage;
     if (!heroBackground) {
       showToast('ابتدا یک تصویر پس‌زمینه انتخاب کنید');
       return;
     }
     saveHeroBackground.disabled = true;
+    saveHeroBackground.textContent = 'در حال بارگذاری…';
     try {
       await saveBranding({ heroBackground });
       showToast('پس‌زمینه برای همه ذخیره شد');
       renderAdminBody();
     } catch(e) {
       console.warn('save hero background failed', e);
-      showToast('ذخیرهٔ پس‌زمینه ناموفق بود؛ اتصال سرور را بررسی کنید');
+      showToast('ذخیرهٔ پس‌زمینه ناموفق بود؛ لطفاً دوباره تلاش کنید');
+      saveHeroBackground.textContent = 'تلاش دوباره برای بارگذاری';
     } finally {
       saveHeroBackground.disabled = false;
     }
