@@ -406,9 +406,8 @@
     background:#ffffff0a; color:var(--ivory); font-family:inherit; font-size:13px;
   }
   .admin-form textarea{resize:vertical; min-height:60px;}
-  .settings-logo-preview{width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--silver);background:var(--graphite);}
-  .settings-logo-preview{width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--silver);background:var(--graphite);}
   .admin-form .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .settings-logo-preview{width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--silver);background:var(--graphite);}
   .img-preview-box{
     width:100%; height:120px; border-radius:12px; border:1.5px dashed #d7dbe040;
     display:flex; align-items:center; justify-content:center; overflow:hidden;
@@ -1016,7 +1015,7 @@ async function refreshSharedState({ silent = false } = {}) {
 
     renderProducts();
     renderCartBar();
-    if (document.getElementById('adminSheet')?.classList.contains('show')) {
+    if (document.getElementById('adminSheet')?.classList.contains('show') && adminTab !== 'settings') {
       renderAdminBody();
     }
   } catch (err) {
@@ -1135,6 +1134,7 @@ function renderProducts(){
     const q = searchQuery.toLowerCase();
     list = list.filter(p => p.name.toLowerCase().includes(q) || p.notes.toLowerCase().includes(q) || p.cat.includes(q));
   }
+
   const productHeading = document.querySelector('#productHeading h2');
   if (productHeading) productHeading.textContent = searchQuery ? 'نتایج جست‌وجو' : activeCat === 'همه' ? 'منتخب‌های گالری' : `محصولات ${activeCat}`;
   if (!list.length) {
